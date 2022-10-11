@@ -1,0 +1,38 @@
+{
+  "name": "isthetuberunning_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "NODE_ENV=production node index.js",
+    "dev": "NODE_ENV=development nodemon index.js",
+    "test": "NODE_ENV=test jest --verbose --runInBand",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mnbf9rca/IsTheTubeRunning.git"
+  },
+  "author": "mnbf9rca <me@xra.co>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mnbf9rca/IsTheTubeRunning/issues"
+  },
+  "homepage": "https://github.com/mnbf9rca/IsTheTubeRunning#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
+    "mongoose": "^6.6.5",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.25.0",
+    "jest": "^29.1.2",
+    "nodemon": "^2.0.20",
+    "supertest": "^6.3.0"
+  },
+  "jest": {
+    "testEnvironment": "node"}
+}
