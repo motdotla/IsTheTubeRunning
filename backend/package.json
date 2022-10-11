@@ -24,6 +24,8 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-async-errors": "^3.1.1",
+    "express-jwt": "^7.7.5",
+    "jwks-rsa": "^2.1.5",
     "mongoose": "^6.6.5",
     "morgan": "^1.10.0"
   },
@@ -34,5 +36,6 @@
     "supertest": "^6.3.0"
   },
   "jest": {
-    "testEnvironment": "node"}
+    "testEnvironment": "node"
+  }
 }
