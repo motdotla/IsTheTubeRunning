@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const userSchema = new mongoose.Schema({
   identifier: { type: String, required: true, minlength: 3 },
   name: String,
-  authSource: String,
+  authSource: { type: String, required: true },
   routes: [
     {
       type: mongoose.Schema.Types.ObjectId,
