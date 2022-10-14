@@ -6,6 +6,7 @@ const app = express()
 const cors = require('cors')
 const homeRouter = require('./controllers/home')
 const usersRouter = require('./controllers/users')
+const routesRouter = require('./controllers/routes')
 
 const { authRequired, authOptional } = require('./middleware/auth0')
 const middleware = require('./utils/middleware')
@@ -39,6 +40,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 
 app.use('/', authOptional, homeRouter)
 app.use('/api/users', authRequired, usersRouter)
+app.use('/api/routes', authOptional, routesRouter)
 
 
 app.use(middleware.unknownEndpoint)
