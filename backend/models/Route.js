@@ -1,10 +1,10 @@
 const mongoose = require('mongoose')
 
-const userSchema = new mongoose.Schema({
-  identifier: { type: String, required: true, minlength: 3 },
-  name: String,
+const routeSchema = new mongoose.Schema({
+  start: String,
+  end: String,
   authSource: { type: String, required: true },
-  routes: [
+  users: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Route'
@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
   ]
 })
 
-userSchema.set('toJSON', {
+routeSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
@@ -20,4 +20,4 @@ userSchema.set('toJSON', {
   }
 })
 
-module.exports = mongoose.model('User', userSchema)
+module.exports = mongoose.model('Route', routeSchema)

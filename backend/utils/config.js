@@ -1,4 +1,5 @@
 require('dotenv').config()
+console.log(process.env) 
 
 const PORT = process.env.PORT || 8080
 const MONGO_CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING || null
