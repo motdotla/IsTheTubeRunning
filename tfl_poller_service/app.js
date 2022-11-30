@@ -8,6 +8,7 @@ const queryRouter = require('./controllers/query')
 
 const middleware = require('./middleware/middleware')
 const logger = require('./middleware/logger')
+//const query_cache = require('./middleware/cache')
 
 
 if (config.is_non_production) {
