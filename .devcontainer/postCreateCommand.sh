@@ -4,5 +4,5 @@ set -euo pipefail
 export WORKDIR=$PWD
 
 # install (dev) dependencies for backend
-cd $WORKDIR/backend
+cd $WORKDIR/tfl_poller_service
 npm install
