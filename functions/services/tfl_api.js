@@ -21,9 +21,10 @@ const add_search_params = (url, params) => {
   return new_url
 }
 
-async function get_disruption(detailed = false) {
+async function get_disruption(detailed = false, for_modes = ['tube', 'dlr', 'overground']) {
   // gets the disruption data from TFL
-  const cache_key = `disruption-${detailed}`
+  const modes = for_modes.join(',')
+  const cache_key = `disruption-${modes}-${detailed}`
   const cached_value = query_cache.get(cache_key)
 
   if (cached_value) {
@@ -31,7 +32,7 @@ async function get_disruption(detailed = false) {
     return cached_value
   } else {
     logger.debug(`${cache_key} cache miss`)
-    const disruption_api_query = 'Line/Mode/tube,dlr,overground/Status'
+    const disruption_api_query = `Line/Mode/${modes}/Status`
     const disruption = await query(disruption_api_query, { detail: detailed })
     query_cache.set(cache_key, disruption.data, disruption.ttl)
     return disruption.data
@@ -47,8 +48,6 @@ async function query(querystring, params = null) {
   let tfl_api_url = new URL(querystring, tfl_api_root)
   // add params to tfl_api_url as search parameters
   if (params) tfl_api_url = add_search_params(tfl_api_url, params)
-  console.log(tfl_api_url.toString())
-
   const tfl_api_headers = {
     'Content-Type': 'application/json',
     'cache-control': 'no-cache',
