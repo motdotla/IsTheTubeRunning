@@ -1,8 +1,8 @@
 const disruption = require('../controllers/disruption')
 
-const httpTrigger = async function (context, req) {
+const httpTrigger = async (context, _req) => {
   await disruption.get_disruption(context)
   context.done()
-};
+}
 
-module.exports = httpTrigger;
+module.exports = httpTrigger
