@@ -2,10 +2,10 @@ const lines = require('../controllers/lines')
 const logger = require('../utils/logger')
 
 const httpTrigger = async (context) => {
-  const modes = context.bindingData.modes.split(',')
-  logger.debug(`fetching line data for modes: ${modes}`)
+  const line = context.bindingData.line
+  logger.debug(`fetching line data for modes: ${line}`)
 
-  const returndata = { body: await lines.lines(modes) }
+  const returndata = { body: await lines.store_stoppoints(line) }
   // context.log(returndata)
   return  returndata
 }
