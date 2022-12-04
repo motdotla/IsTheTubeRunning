@@ -39,7 +39,6 @@ async function get_disruption(detailed = false, for_modes = ['tube', 'dlr', 'ove
   }
 }
 
-
 async function query(querystring, params = null) {
   const axios = require('axios')
   const tfl_api_root = config.tfl_api_root
@@ -70,4 +69,42 @@ async function query(querystring, params = null) {
   return { data, ttl }
 }
 
-module.exports = { get_disruption }
+async function get_line_stoppoints(line_id) {
+  // gets the stoppoints for a given line
+  const cache_key = `line_stoppoints-${line_id}`
+  const cached_value = query_cache.get(cache_key)
+  if (cached_value) {
+    logger.debug(`${cache_key} cache hit`)
+    return cached_value
+  }
+  else {
+    logger.debug(`${cache_key} cache miss`)
+    const line_stoppoints_api_query = `Line/${line_id}/StopPoints`
+    const line_stoppoints = await query(line_stoppoints_api_query)
+    query_cache.set(cache_key, line_stoppoints.data, line_stoppoints.ttl)
+    return line_stoppoints
+  }
+}
+
+async function get_all_lines(modes = ['tube', 'dlr', 'overground']) {
+  // gets all lines for a given mode
+  // including the name and ID of the originating and terminating stations
+  const cache_key = `all_lines-${modes}`
+  const cached_value = query_cache.get(cache_key)
+  if (cached_value) {
+    logger.debug(`${cache_key} cache hit`)
+
+    return cached_value
+  }
+  else {
+    logger.debug(`${cache_key} cache miss`)
+    const all_lines_api_query = `Line/Mode/${modes}/Route`
+    const all_lines = await query(all_lines_api_query)
+    query_cache.set(cache_key, all_lines.data, all_lines.ttl)
+    return all_lines
+  }
+}
+
+
+
+module.exports = { get_disruption, get_line_stoppoints, get_all_lines }
