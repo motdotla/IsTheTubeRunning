@@ -35,7 +35,7 @@ async function get_disruption(detailed = false, for_modes = ['tube', 'dlr', 'ove
     const disruption_api_query = `Line/Mode/${modes}/Status`
     const disruption = await query(disruption_api_query, { detail: detailed })
     query_cache.set(cache_key, disruption.data, disruption.ttl)
-    return disruption.data
+    return disruption
   }
 }
 
@@ -48,6 +48,7 @@ async function query(querystring, params = null) {
   let tfl_api_url = new URL(querystring, tfl_api_root)
   // add params to tfl_api_url as search parameters
   if (params) tfl_api_url = add_search_params(tfl_api_url, params)
+  
   const tfl_api_headers = {
     'Content-Type': 'application/json',
     'cache-control': 'no-cache',
