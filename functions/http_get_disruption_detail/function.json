@@ -7,12 +7,13 @@
       "name": "req",
       "methods": [
         "get"
-      ]
+      ],
+      "route": "disruption_detail"
     },
     {
       "type": "http",
       "direction": "out",
-      "name": "res"
+      "name": "$return"
     }
   ]
 }
