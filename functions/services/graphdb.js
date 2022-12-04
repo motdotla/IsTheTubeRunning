@@ -9,27 +9,27 @@ const client = new Gremlin.driver.Client(
   config.graph_endpoint,
   {
     authenticator,
-    traversalsource : 'g',
-    rejectUnauthorized : true,
-    mimeType : 'application/vnd.gremlin-v2.0+json'
+    traversalsource: 'g',
+    rejectUnauthorized: true,
+    mimeType: 'application/vnd.gremlin-v2.0+json'
   }
 )
 
 function escape_object(obj) {
   // escape the object by replacing single quotes with escaped quotes
-  return JSON.stringify(obj).replace(/'/g, "\\'")
+  return JSON.stringify(obj).replace(/'/g, '\\\'')
 }
 
 function escape_string(str) {
-  return str.replace(/'/g, "\\'")
+  return str.replace(/'/g, '\\\'')
 }
 
-async function add_stoppoint(stoppoint, upsert=false) {
+async function add_stoppoint(stoppoint, upsert = false) {
   /**
    * Adds a stoppoint to the graphdb.
    * a stoppoint is an object with teh following properties:
    * id, type, name, naptanId, stationNaptan, lat, lon, modes, lines
-   * 
+   *
    * @param {object} stoppoint - stoppoint object
    * @returns {Promise} - pending query to graphdb
    */
@@ -63,20 +63,31 @@ async function add_stoppoint(stoppoint, upsert=false) {
 
 }
 
+async function add_line(line_edge, upsert = false) {
+  // add a line to the graphdb
+  // a line is an object with the following properties:
+  // id, name, modeName, modeId, routeSections
+  logger.debug(`adding line ${line_edge.id} to graphdb`)
 
 
+  const query = `g.E('${line_edge['id']}')
+    .fold()
+    .coalesce(
+      unfold(),
+      addE('TO')
+      .from(g.V('${line_edge['from']}'))
+      .to(g.V('${line_edge['to']}'))
+      .property('id', '${line_edge['id']}')
+      .property('line', '${line_edge['lineName']}')
+      .property('branch', '${line_edge['branchId']}')
+      .property('direction', '${line_edge['direction']}'))`
+  // submit the query to the graphdb
+  logger.debug(query.replace(/\n/g, ''))
 
+  return await client.submit(query)
 
-
-async function addEdge(station1Naptan, station2Natplan, line, modeName) {
-  // station1Natplan is the from station
-  // station2Natplan is the to station
-  // line is the line that connects the two stations
-  // note that the edge is directional i.e. each edge is from station1 to station2, but not vice versa
-
-  const query = `g.V('${station1Naptan}').addE('next').to(g.V('${station2Natplan}')).property('line', '${line}').property('mode', '${modeName}')`
-  const result = await client.submit(query)
-  return result
 }
 
-module.exports = { add_stoppoint }
+
+
+module.exports = { add_stoppoint, add_line }

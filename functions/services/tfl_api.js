@@ -120,11 +120,9 @@ async function get_disruption(detailed = false, for_modes = ['tube', 'dlr', 'ove
   }
 }
 
-
-
 async function get_line_stoppoints(line_id) {
   /**
-   * fetches stoppoints for a given line
+   * fetches stoppoints for a given line in order
    *
    * @param {String} line_id - the line ID
    * @returns {Array} - line object with an array of stoppoints
@@ -144,6 +142,61 @@ async function get_line_stoppoints(line_id) {
     query_cache.set(cache_key, line_stoppoints.data, line_stoppoints.ttl)
     return line_stoppoints
   }
+}
+
+function extract_stoppoints_from_stoppoint_array(stoppoint_array) {
+  return stoppoint_array.map((sp) => {
+    return {
+      id: sp['id'],
+      name: sp['name'],
+      naptanId: sp['stationId'],
+      lat: sp['lat'],
+      lon: sp['lon'],
+      lines: sp['lines']
+    }}
+  )
+}
+
+async function get_line_stoppoints_in_order(line_id) {
+  /**
+   * fetches stoppoints for a given line in order
+   *
+   * @param {String} line_id - the line ID
+   * @returns {Array} - array of line object with an array of stoppoints and other metadata
+   *
+   */
+  const cache_key = `line_stoppoints_ordered-${line_id}`
+  const cached_value = query_cache.get(cache_key)
+  if (cached_value) {
+    logger.debug(`${cache_key} cache hit`)
+
+    return structure_cached_value(cached_value, cache_key)
+  }
+  else {
+    logger.debug(`${cache_key} cache miss`)
+    const line_stoppoints_api_query = `Line/${line_id}/Route/Sequence/all`
+    const line_stoppoints = await query(line_stoppoints_api_query, { excludeCrowding: true })
+    // extract the stoppoints from the line_stoppoints data
+    // const stoppoints = line_stoppoints.data.stopPointSequences[0]
+    const directional_points = line_stoppoints.data.stopPointSequences.map(sp => get_directional_stoppoints(sp))
+
+    query_cache.set(cache_key, directional_points, line_stoppoints.ttl)
+    return { data: directional_points, ttl: line_stoppoints.ttl }
+  }
+}
+
+function get_directional_stoppoints(stoppoint) {
+
+  return {
+    id: stoppoint['lineId'],
+    lineName: stoppoint['lineName'],
+    branchId: stoppoint['branchId'],
+    nextBranchId: stoppoint['nextBranchId'],
+    prevBranchId: stoppoint['prevBranchId'],
+    direction: stoppoint['direction'],
+    points: extract_stoppoints_from_stoppoint_array(stoppoint['stopPoint'])
+  }
+
 }
 
 async function get_all_lines(modes = ['tube', 'dlr', 'overground']) {
@@ -172,4 +225,7 @@ async function get_all_lines(modes = ['tube', 'dlr', 'overground']) {
   }
 }
 
-module.exports = { get_disruption, get_line_stoppoints, get_all_lines }
+module.exports = { get_disruption,
+  get_line_stoppoints,
+  get_all_lines,
+  get_line_stoppoints_in_order }
