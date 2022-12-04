@@ -4,12 +4,12 @@ const query_cache = require('../services/cache')
 
 
 const get_s_maxage = (cache_control_header) => {
-  /** 
+  /**
    * extracts s-maxage from cache-control header
-   * 
+   *
    * @param {String} cache_control_header - the cache-control header
    * @returns {Number} - the s-maxage value
-   * 
+   *
   */
   //https://stackoverflow.com/questions/60154782/how-to-get-max-age-value-from-cache-control-header-using-request-in-nodejs
   const matches = cache_control_header.match(/s-maxage=(\d+)/)
@@ -20,11 +20,11 @@ const get_s_maxage = (cache_control_header) => {
 const add_search_params = (url, params) => {
   /**
    * adds search params to a url
-   * 
+   *
    * @param {URL} url - the url to add params to
    * @param {Object} params - the params to add
    * @returns {URL} - the url with params added
-   * 
+   *
    */
   let new_params = params
   Object.keys(new_params).forEach((key) => (new_params[key] === undefined ? delete new_params[key] : {}))
@@ -39,11 +39,11 @@ const add_search_params = (url, params) => {
 const structure_cached_value = (cached_value, cache_key) => {
   /**
    * structures cached value for return
-   * 
+   *
    * @param {Object} cached_value - the cached value
    * @param {String} cache_key - the cache key
    * @returns {Object} - the structured cached value with .data and .ttl properties
-   * 
+   *
    */
 
   const cache_ttl = query_cache.getTtl( cache_key )
@@ -61,7 +61,7 @@ const structure_cached_value = (cached_value, cache_key) => {
 async function query(querystring, params = null) {
   /**
    * fetches data from tfl api
-   * 
+   *
    * @param {String} querystring - the query string to append to the base url
    * @param {Object} params - the query parameters to append to the url
    * @returns {Object} - the response from the api
@@ -99,7 +99,7 @@ async function query(querystring, params = null) {
 async function get_disruption(detailed = false, for_modes = ['tube', 'dlr', 'overground']) {
   /**
    * fetches disruptions from tfl for given modes
-   * 
+   *
    * @param {Boolean} detailed - whether to fetch detailed disruption information
    * @param {Array} for_modes - array of modes to fetch disruptions for
    * @returns {Array} - array of lines with disruption data
@@ -125,10 +125,10 @@ async function get_disruption(detailed = false, for_modes = ['tube', 'dlr', 'ove
 async function get_line_stoppoints(line_id) {
   /**
    * fetches stoppoints for a given line
-   * 
+   *
    * @param {String} line_id - the line ID
    * @returns {Array} - line object with an array of stoppoints
-   * 
+   *
    */
   const cache_key = `line_stoppoints-${line_id}`
   const cached_value = query_cache.get(cache_key)
@@ -149,10 +149,10 @@ async function get_line_stoppoints(line_id) {
 async function get_all_lines(modes = ['tube', 'dlr', 'overground']) {
   /**
    * fetches lines from tfl for given modes
-   * 
+   *
    * @param {Array} modes - array of modes to fetch lines for
    * @returns {Array} - array of lines including the name and ID of the originating and terminating stations
-   * 
+   *
    */
 
 
