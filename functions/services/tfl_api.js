@@ -82,6 +82,7 @@ async function query(querystring, params = null) {
     'app_key': tfl_app_key
   }
   let tfl_api_response = null
+  
   try {
     tfl_api_response = await axios.get(tfl_api_url.toString(), { headers: tfl_api_headers })
   } catch (error) {

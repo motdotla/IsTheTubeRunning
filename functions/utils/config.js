@@ -10,6 +10,8 @@ const graph_endpoint = 'wss://tube.gremlin.cosmos.azure.com:443/'
 const graph_primary_key = process.env.GRAPH_PRIMARY_KEY
 const graph_database = 'tube'
 const graph_stoppoint_colleciton = 'stoppoints'
+const eventhub_sender_connection_string = process.env.cynexia_tube_sender_EVENTHUB
+const eventhub_name = 'tube'
 
 module.exports = {
   PORT,
@@ -21,5 +23,7 @@ module.exports = {
   graph_endpoint,
   graph_primary_key,
   graph_database,
-  graph_stoppoint_colleciton
+  graph_stoppoint_colleciton,
+  eventhub_sender_connection_string,
+  eventhub_name
 }
