@@ -1,0 +1,14 @@
+{
+  "bindings": [
+    {
+      "type": "eventHubTrigger",
+      "name": "eventHubMessages",
+      "direction": "in",
+      "eventHubName": "tube",
+      "connection": "cynexia_tube_listener_EVENTHUB",
+      "cardinality": "many",
+      "consumerGroup": "graphwriter",
+      "dataType": "string"
+    }
+  ]
+}

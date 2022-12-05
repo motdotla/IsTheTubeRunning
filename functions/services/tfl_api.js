@@ -82,7 +82,7 @@ async function query(querystring, params = null) {
     'app_key': tfl_app_key
   }
   let tfl_api_response = null
-  
+
   try {
     tfl_api_response = await axios.get(tfl_api_url.toString(), { headers: tfl_api_headers })
   } catch (error) {
@@ -200,7 +200,7 @@ function get_directional_stoppoints(stoppoint) {
 
 }
 
-async function get_all_lines(modes = ['tube', 'dlr', 'overground']) {
+async function get_lines_for_mode(modes = ['tube', 'dlr', 'overground']) {
   /**
    * fetches lines from tfl for given modes
    *
@@ -221,12 +221,20 @@ async function get_all_lines(modes = ['tube', 'dlr', 'overground']) {
     logger.debug(`${cache_key} cache miss`)
     const all_lines_api_query = `Line/Mode/${modes}/Route`
     const all_lines = await query(all_lines_api_query)
-    query_cache.set(cache_key, all_lines.data, all_lines.ttl)
-    return all_lines
+    const all_lines_summarised = all_lines.data.map((line) => {
+      return {
+        id: line['id'],
+        name: line['name'],
+        modeName: line['modeName'],
+        serviceTypes: [line['serviceTypes'].map((st) => st['name'])]
+      }})
+
+    query_cache.set(cache_key, all_lines_summarised, all_lines.ttl)
+    return { data: all_lines_summarised, ttl: all_lines.ttl }
   }
 }
 
 module.exports = { get_disruption,
   get_line_stoppoints,
-  get_all_lines,
+  get_lines_for_mode,
   get_line_stoppoints_in_order }
