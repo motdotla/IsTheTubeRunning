@@ -1,4 +1,4 @@
-const lines = require('../controllers/lines')
+const lines = require('../controllers/line')
 const logger = require('../utils/logger')
 
 const httpTrigger = async (context) => {
