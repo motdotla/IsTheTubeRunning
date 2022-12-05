@@ -21,18 +21,23 @@ async function publishBatch(batch_array) {
   let batch_count = 0
   for (let i = 0; i < batch_array.length; i++) {
     if (batch_array[i]){
-      if (!batch.tryAdd(batch_array[i])) {
+      let event_item = { body: batch_array[i] }
+      // logger.debug('publishBatch event_item: ', event_item)
+      if (!batch.tryAdd(event_item)) {
+        batch_count = batch_count + batch.count
         await client.sendBatch(batch)
         batch = await client.createBatch()
-        if (!batch.tryAdd(batch_array[i])) {
-          throw new Error(`Failed to add item to batch: ${batch_array[i]}`)
-        } else {batch_count++}
+        if (!batch.tryAdd(event_item)) {
+          throw new Error(`Failed to add item to batch: ${event_item}`)
+        } 
         if (i === batch_array.length - 1) {
+          batch_count = batch_count + batch.count
           await client.sendBatch(batch)
         }
-      } else {batch_count++}
+      } 
     }
   }
+  batch_count = batch_count + batch.count
   await client.close()
   logger.debug(`published ${batch_count} items to eventhub`)
   return { success: true, submitted: batch_count, total_possible: batch_array.length }
