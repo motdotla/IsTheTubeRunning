@@ -71,7 +71,7 @@ async function store_stoppoints(line){
       'lat': s['lat'],
       'lon': s['lon'],
       'modes': s['modes'],
-      'lines': s['lines']
+      'lines': s['lines'].map(l => l['id'])
     }
   })
   //logger.debug(stoppoint_map)
