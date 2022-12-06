@@ -1,4 +1,5 @@
 const logger = require('../utils/logger')
+const router = require('../controllers/router')
 
 
 async function processEvents(context, eventHubMessages) {
@@ -7,18 +8,7 @@ async function processEvents(context, eventHubMessages) {
   eventHubMessages.forEach((message, index) => {
     // need to find the type of the message
     const parsed_message = jsonParser(message)
-    const message_type = parsed_message['type']
-
-    switch (message_type.toLowerCase()) {
-    case 'stoppoint':
-      //logger.debug('stoppoints message received')
-      break
-    case 'line':
-      //logger.debug('lines message received')
-      break
-    default:
-      logger.debug(`unknown message type received: ${message_type}`)
-    }
+    return router.route_messages_by_type(parsed_message)
   })
 }
 
