@@ -121,6 +121,10 @@ async function get_disruption(detailed = false, for_modes = ['tube', 'dlr', 'ove
   }
 }
 
+
+
+
+
 async function get_line_stoppoints(line_id) {
   /**
    * fetches stoppoints for a given line in order
@@ -140,23 +144,12 @@ async function get_line_stoppoints(line_id) {
     logger.debug(`${cache_key} cache miss`)
     const line_stoppoints_api_query = `Line/${line_id}/StopPoints`
     const line_stoppoints = await query(line_stoppoints_api_query)
-    query_cache.set(cache_key, line_stoppoints.data, line_stoppoints.ttl)
-    return line_stoppoints
+    const stoppoint_data = extract_stoppoints_from_stoppoint_array(line_stoppoints.data)
+    query_cache.set(cache_key, stoppoint_data, line_stoppoints.ttl)
+    return { data: stoppoint_data, ttl: line_stoppoints.ttl }
   }
 }
 
-function extract_stoppoints_from_stoppoint_array(stoppoint_array) {
-  return stoppoint_array.map((sp) => {
-    return {
-      id: sp['id'],
-      name: sp['name'],
-      naptanId: sp['stationId'],
-      lat: sp['lat'],
-      lon: sp['lon'],
-      lines: sp['lines']
-    }}
-  )
-}
 
 async function get_line_stoppoints_in_order(line_id) {
   /**
@@ -178,13 +171,18 @@ async function get_line_stoppoints_in_order(line_id) {
     const line_stoppoints_api_query = `Line/${line_id}/Route/Sequence/all`
     const line_stoppoints = await query(line_stoppoints_api_query, { excludeCrowding: true })
     // extract the stoppoints from the line_stoppoints data
-    // const stoppoints = line_stoppoints.data.stopPointSequences[0]
+    if (!line_stoppoints.data.stopPointSequences){
+      logger.debug('line_stoppoints.data.stopPointSequences', line_stoppoints.data.stopPointSequences, line_stoppoints.data, line_id)
+      throw new Error('line_stoppoints.data.stopPointSequences is undefined')
+      
+    }
     const directional_points = line_stoppoints.data.stopPointSequences.map(sp => get_directional_stoppoints(sp))
 
     query_cache.set(cache_key, directional_points, line_stoppoints.ttl)
     return { data: directional_points, ttl: line_stoppoints.ttl }
   }
 }
+
 
 function get_directional_stoppoints(stoppoint) {
 
@@ -198,6 +196,20 @@ function get_directional_stoppoints(stoppoint) {
     points: extract_stoppoints_from_stoppoint_array(stoppoint['stopPoint'])
   }
 
+}
+function extract_stoppoints_from_stoppoint_array(stoppoint_array) {
+  return stoppoint_array.map((sp) => {
+    return {
+      id: sp['id'],
+      type: 'StopPoint',
+      name: ('name' in sp) ? sp['name'] : sp['commonName'],
+      naptanId: ('stationId' in sp) ? sp['stationId'] : sp['naptanId'],
+      lat: sp['lat'],
+      lon: sp['lon'],
+      modes: sp['modes'],
+      lines: sp['lines'].map(l => l['id'])
+    }}
+  )
 }
 
 async function get_lines_for_mode(modes = ['tube', 'dlr', 'overground']) {

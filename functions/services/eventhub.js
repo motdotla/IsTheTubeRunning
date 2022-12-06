@@ -21,7 +21,9 @@ async function publishBatch(batch_array) {
   let batch_count = 0
   for (let i = 0; i < batch_array.length; i++) {
     if (batch_array[i]){ // sometimes we get nulls in the array
-      let event_item = { body: batch_array[i], contentType: 'application/json' } // JSON.stringify(batch_array[i]) } //sometimes we need to stringify the object
+      //let event_item = { body: JSON.stringify(batch_array[i]), contentType: 'application/json' } //sometimes we need to stringify the object, sometimes not. The receiver needs to recursively unpack the object
+      let event_item = { body: batch_array[i], contentType: 'application/json' } // it's not clear under what conditions this happens
+      // console.log('publishBatch event_item: ', event_item)
       // logger.debug('publishBatch event_item: ', event_item)
       if (!batch.tryAdd(event_item)) { // if the batch is full, send it and start a new one
         batch_count = batch_count + batch.count
@@ -30,12 +32,6 @@ async function publishBatch(batch_array) {
         if (!batch.tryAdd(event_item)) { // if the batch is still full, throw an error
           throw new Error(`Failed to add item to batch: ${event_item}`)
         }
-        /*
-        if (i === batch_array.length - 1) { // if we are at the end of the array, send the last batch
-          batch_count = batch_count + batch.count
-          await client.sendBatch(batch)
-        }
-        */
       }
     }
   }

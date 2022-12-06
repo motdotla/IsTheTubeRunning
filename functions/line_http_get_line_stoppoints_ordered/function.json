@@ -8,7 +8,7 @@
       "methods": [
         "get"
       ],
-      "route": "lines/store/all"
+      "route": "xx/stoppoints/{line}/ordered"
     },
     {
       "type": "http",

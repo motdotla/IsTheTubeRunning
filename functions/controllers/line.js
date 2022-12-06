@@ -1,6 +1,10 @@
 const call_tfl = require('../services/tfl_api')
 const logger = require('../utils/logger')
 const eventhub = require('../services/eventhub')
+const graph = require('../services/graphdb')
+const helpers = require('../utils/helpers')
+
+// a line (in our context) is a list of stoppoints  connected by route steps. A route step links exactly two stoppoints in a specific direction.
 
 async function lines_for_mode(mode) {
   /**
@@ -24,28 +28,46 @@ async function stoppoints(line, ordered=false) {
    * @returns {object} - stoppoints.data - array of stoppoints, stoppoints.ttl - ttl of the data
    *
    **/
-
-
-  if (ordered) {
-    return await call_tfl.get_line_stoppoints_in_order(line)
-  } else {
-    return await call_tfl.get_line_stoppoints(line)
-  }
+  console.log('stoppoints', line, ordered)
+  const stoppoints = ordered ? await call_tfl.get_line_stoppoints_in_order(line) : await call_tfl.get_line_stoppoints(line)
+  return stoppoints
 
 }
 
-async function store_stoppoints_and_lines(line){
-  /** fetches stoppoints for a line
+
+async function store_all_stoppoints_for_mode(mode){
+  /**
+   * Fetches the list of lines for a mode from TFL
+   * Fetches the stoppoints data from TFL by line
    * pushes the stoppoints to the event hub
-   * fetches the lines
-   * pushes the lines to the event hub
-   * returns a promise
+   *
    * @param {String} line - line to fetch stoppoints for
-   * @returns {Promise} - ???
-   * **/
+   * @returns {Promise} Promise.all from the store_stoppoints function
+   *
+   **/
+  logger.debug(`store_all_stoppoints_for_mode: ${mode}`)
+  const { lines } = await lines_for_mode(mode)
+  console.log(lines.data)
+  const stoppoint_promises = lines.data.map(l => store_stoppoints(l['id']))
+  return Promise.all(stoppoint_promises)
+}
 
-  return Promise.all([store_stoppoints(line), store_lines(line)])
-
+async function store_all_lines_for_mode(mode){
+  /**
+   * Fetches the list of lines for a mode from TFL
+   * Fetches the ordered list of stoppoints data from TFL by line
+   * generates the edges between the stoppoints
+   * pushes the edges to the event hub
+      *
+   * @param {String} line - line to fetch stoppoints for
+   * @returns {Promise} Promise.all from eventhub.publishStoppoints
+   *
+   **/
+  logger.debug(`store_all_lines_for_mode: ${mode}`)
+  const { lines } = await lines_for_mode(mode)
+  console.log(lines.data)
+  const line_promises = lines.data.map(l => store_lines(l['id']))
+  return Promise.all(line_promises)
 }
 
 async function store_stoppoints(line){
@@ -60,42 +82,10 @@ async function store_stoppoints(line){
   logger.debug('store_stoppoints')
   const { data: stoppoints } = await call_tfl.get_line_stoppoints(line)
 
-  // logger.debug(stoppoints)
-  const stoppoint_map = stoppoints.map(s => {
-    return {
-      'id': s['id'],
-      'type': 'StopPoint',
-      'commonName': s['commonName'],
-      'naptanId': s['naptanId'],
-      'stationNaptan': s['stationNaptan'],
-      'lat': s['lat'],
-      'lon': s['lon'],
-      'modes': s['modes'],
-      'lines': s['lines'].map(l => l['id'])
-    }
-  })
-  //logger.debug(stoppoint_map)
-
-  return  eventhub.publishBatch(stoppoint_map)
+  return  eventhub.publishBatch(stoppoints)
 
 }
 
-async function store_all_lines(mode){
-  /** 
-   * fetches all line types for a given mode
-   * calls store_lines and store_stoppoints for each line
-   * returns a promise array
-   * 
-   * @param {String} mode - mode to fetch lines for
-   * @returns {Promise} - 
-   * 
-   */
-
-  const lines = await call_tfl.get_lines_for_mode(mode)
-  const lines_to_store = lines.data.map(line => line['id'])
-  return Promise.all(lines_to_store.map(line => store_stoppoints_and_lines(line)))
-
-}
 
 async function store_lines(line) {
   /**
@@ -152,10 +142,47 @@ function generate_single_line(line) {
   })
 }
 
-module.exports = { 
+async function process_line_message(message) {
+  /**
+   * processes a line message
+   * receives a message defining a line
+   * converts it to an edge
+   * pushes the edge to the graph
+   * it will retry up to 5 times with a 2 second delay
+   *
+   * @param {Object} message - message to process
+   * @returns {Promise} - result of publishLines
+   *
+   *
+   *  **/
+  const line = message['body']
+  const edge = generate_single_line(line)
+  return helpers.retry(graph.add_line(edge,true),5,2 )
+
+}
+
+async function process_stoppoint_message(message) {
+  /**
+   * processes a stoppoint message
+   * receives a message defining a stoppoint
+   * pushes the stoppoint to the graph
+   * it will retry up to 5 times with a 2 second delay
+   * 
+   * @param {Object} message - message to process
+   * @returns {Promise} - result of publishStoppoints
+   * 
+   * */
+  const stoppoint = message['body']
+  return helpers.retry(graph.add_stoppoint(stoppoint,true),5,2 )
+}
+
+
+module.exports = {
   stoppoints,
   lines_for_mode,
   store_stoppoints,
   store_lines,
-  store_stoppoints_and_lines,
-  store_all_lines }
+  store_all_stoppoints_for_mode,
+  store_all_lines_for_mode,
+  process_line_message,
+  process_stoppoint_message }

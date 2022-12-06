@@ -15,10 +15,7 @@ const client = new Gremlin.driver.Client(
   }
 )
 
-function escape_object(obj) {
-  // escape the object by replacing single quotes with escaped quotes
-  return JSON.stringify(obj).replace(/'/g, '\\\'')
-}
+
 
 function escape_string(str) {
   return str.replace(/'/g, '\\\'')

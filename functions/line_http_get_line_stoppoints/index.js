@@ -3,9 +3,12 @@ const logger = require('../utils/logger')
 
 const httpTrigger = async (context) => {
   const line = context.bindingData.line
-  logger.debug(`fetching line data for modes: ${line}`)
+  // check whether parameter ordered=true passed
+  const ordered = context.bindingData.ordered === true
   
-  const returndata = { body: await lines.stoppoints(line) }
+  logger.debug(`fetching line data for modes: ${line}, ordered: ${ordered}`)
+  
+  const returndata = { body: await lines.stoppoints(line, ordered) }
   // context.log(returndata)
   return  returndata
 }
