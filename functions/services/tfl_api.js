@@ -238,7 +238,7 @@ async function get_lines_for_mode(modes = ['tube', 'dlr', 'overground']) {
         id: line['id'],
         name: line['name'],
         modeName: line['modeName'],
-        serviceTypes: [line['serviceTypes'].map((st) => st['name'])]
+        serviceTypes: line['serviceTypes'].map((st) => st['name'])
       }})
 
     query_cache.set(cache_key, all_lines_summarised, all_lines.ttl)

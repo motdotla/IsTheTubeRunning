@@ -1,7 +1,7 @@
 const Gremlin = require('gremlin')
 const config = require('../utils/config')
 const logger = require('../utils/logger')
-
+const helpers = require('../utils/helpers')
 
 const authenticator = new Gremlin.driver.auth.PlainTextSaslAuthenticator(`/dbs/${config.graph_database}/colls/${config.graph_stoppoint_colleciton}`, config.graph_primary_key)
 
@@ -21,7 +21,7 @@ function escape_string(str) {
   return str.replace(/'/g, '\\\'')
 }
 
-async function add_stoppoint(stoppoint, upsert = false) {
+const add_stoppoint = async (stoppoint, upsert = false) => {
   /**
    * Adds a stoppoint to the graphdb.
    * a stoppoint is an object with teh following properties:
@@ -34,14 +34,12 @@ async function add_stoppoint(stoppoint, upsert = false) {
   // construct a query to add the stoppoint to the graphdb
   const add_query = `addV('${stoppoint['type']}')
   .property('id', '${stoppoint['id']}')
-  .property('name', '${escape_string(stoppoint['commonName'])}')
-  .property('stationNaptan', '${stoppoint['stationNaptan']}')
-  .property('commonName', '${escape_string(stoppoint['commonName'])}')
+  .property('name', '${escape_string(stoppoint['name'])}')
   .property('naptanId', '${stoppoint['naptanId']}')
   .property('lat', '${stoppoint['lat']}')
   .property('lon', '${stoppoint['lon']}')
   .property('modes', '${stoppoint['modes']}')
-  .property('lines', '${stoppoint.lines.map(m => m.id)}')`
+  .property('lines', '${stoppoint['lines']}')`
 
   // if upsert is true, then we want to wrap the add_query in an upsert
   const with_upsert = `V('${stoppoint.id}')
@@ -56,11 +54,15 @@ async function add_stoppoint(stoppoint, upsert = false) {
   // log the query, removing the newlines
   // logger.debug(query.replace(/\n/g, ''))
   // submit the query to the graphdb
-  return await client.submit(query)
+  //return await client.submit(query)
+  // TODO - fix retry logic
+  return helpers.retry(function(){  client.submit(query) }, 5,2 )
 
 }
 
-async function add_line(line_edge, upsert = false) {
+
+
+const add_line = async (line_edge, upsert = false) => {
   // add a line to the graphdb
   // a line is an object with the following properties:
   // id, name, modeName, modeId, routeSections
@@ -79,9 +81,9 @@ async function add_line(line_edge, upsert = false) {
       .property('branch', '${line_edge['branchId']}')
       .property('direction', '${line_edge['direction']}'))`
   // submit the query to the graphdb
-  logger.debug(query.replace(/\n/g, ''))
+  //logger.debug(query.replace(/\n/g, ''))
 
-  return await client.submit(query)
+  return helpers.retry(function(){ client.submit(query)}, 5,2 )
 
 }
 

@@ -142,7 +142,7 @@ function generate_single_line(line) {
   })
 }
 
-async function process_line_message(message) {
+async function process_line_message(line) {
   /**
    * processes a line message
    * receives a message defining a line
@@ -155,13 +155,13 @@ async function process_line_message(message) {
    *
    *
    *  **/
-  const line = message['body']
+  // const line = message['body']
   const edge = generate_single_line(line)
   return helpers.retry(graph.add_line(edge,true),5,2 )
 
 }
 
-async function process_stoppoint_message(message) {
+async function process_stoppoint_message(stoppoint) {
   /**
    * processes a stoppoint message
    * receives a message defining a stoppoint
@@ -172,8 +172,8 @@ async function process_stoppoint_message(message) {
    * @returns {Promise} - result of publishStoppoints
    * 
    * */
-  const stoppoint = message['body']
-  return helpers.retry(graph.add_stoppoint(stoppoint,true),5,2 )
+  // const stoppoint = message['body']
+  return graph.add_stoppoint(stoppoint,true)
 }
 
 
