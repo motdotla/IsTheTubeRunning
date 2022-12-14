@@ -1,5 +1,5 @@
 {
-  "azureFunctions.deploySubpath": "functions",
+  "azureFunctions.deploySubpath": "",
   "azureFunctions.postDeployTask": "npm install (functions)",
   "azureFunctions.projectLanguage": "JavaScript",
   "debug.internalConsoleOptions": "neverOpen",
@@ -9,6 +9,5 @@
   "jest.showCoverageOnLoad": false,
   "jest.testExplorer": {
     "enabled": true
-  },
-  "jest.jestCommandLine": ""
+  }
 }
