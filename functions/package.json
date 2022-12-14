@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "start": "func start",
-    "test": "echo \"No tests yet...\""
+    "test": "NODE_ENV=test jest --verbose --runInBand"
   },
   "dependencies": {
     "@azure/event-hubs": "^5.8.0",
@@ -13,5 +13,8 @@
     "eslint": "^8.28.0",
     "gremlin": "^3.6.1",
     "node-cache": "^5.1.2"
+  },
+  "devDependencies": {
+    "jest": "^29.3.1"
   }
 }
