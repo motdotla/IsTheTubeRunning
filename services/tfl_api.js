@@ -1,7 +1,7 @@
 const config = require('../utils/config')
 const logger = require('../utils/logger')
 const query_cache = require('../services/cache')
-
+const axios = require('axios')
 
 const get_s_maxage = (cache_control_header) => {
   /**
@@ -67,7 +67,7 @@ async function query(querystring, params = null) {
    * @returns {Object} - the response from the api
    */
 
-  const axios = require('axios')
+
   const tfl_api_root = config.tfl_api_root
   const tfl_app_key = config.TFL_APP_KEY
 

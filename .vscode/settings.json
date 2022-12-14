@@ -4,5 +4,11 @@
   "azureFunctions.projectLanguage": "JavaScript",
   "debug.internalConsoleOptions": "neverOpen",
   "azureFunctions.preDeployTask": "npm prune (functions)",
-  "azureFunctions.projectRuntime": "~4"
+  "azureFunctions.projectRuntime": "~4",
+  "jest.rootPath": "",
+  "jest.showCoverageOnLoad": false,
+  "jest.testExplorer": {
+    "enabled": true
+  },
+  "jest.jestCommandLine": ""
 }
