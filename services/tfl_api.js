@@ -84,6 +84,7 @@ async function query(querystring, params = null) {
   let tfl_api_response = null
 
   try {
+    logger.debug(`fetching ${tfl_api_url.toString()}`)
     tfl_api_response = await axios.get(tfl_api_url.toString(), { headers: tfl_api_headers })
   } catch (error) {
     logger.error(error)
@@ -190,8 +191,8 @@ function get_directional_stoppoints(stoppoint) {
     id: stoppoint['lineId'],
     lineName: stoppoint['lineName'],
     branchId: stoppoint['branchId'],
-    nextBranchId: stoppoint['nextBranchId'],
-    prevBranchId: stoppoint['prevBranchId'],
+    nextBranchIds: stoppoint['nextBranchIds'],
+    prevBranchIds: stoppoint['prevBranchIds'],
     direction: stoppoint['direction'],
     points: extract_stoppoints_from_stoppoint_array(stoppoint['stopPoint'])
   }

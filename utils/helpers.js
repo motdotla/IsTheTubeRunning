@@ -1,5 +1,13 @@
 
 
+// sometimes objects are over-stringified, and need multiple 'parsing' to get to the object
+// https://stackoverflow.com/a/67576746
+function jsonParser(blob) {
+  let parsed = JSON.parse(blob)
+  if (typeof parsed === 'string') parsed = jsonParser(parsed)
+  return parsed
+}
+
 // This function will retry a function up to a maximum number of attempts
 
 const retry = async (fn, maxAttempts, retry_time = null) => {
@@ -35,4 +43,4 @@ const delay = (fn, ms) => new Promise((resolve) => setTimeout(() => resolve(fn()
 const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
 
 
-module.exports = { retry }
+module.exports = { retry, jsonParser }

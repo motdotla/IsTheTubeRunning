@@ -1,4 +1,4 @@
-const call_tfl = require('../services/tfl_api')
+const tfl_api = require('../services/tfl_api')
 const logger = require('../utils/logger')
 const eventhub = require('../services/eventhub')
 const graph = require('../services/graphdb')
@@ -16,7 +16,7 @@ async function lines_for_mode(mode) {
    *
    **/
 
-  const lines = await call_tfl.get_lines_for_mode(mode)
+  const lines = await tfl_api.get_lines_for_mode(mode)
   return { lines }
 }
 
@@ -29,7 +29,7 @@ async function stoppoints(line, ordered=false) {
    *
    **/
   console.log('stoppoints', line, ordered)
-  const stoppoints = ordered ? await call_tfl.get_line_stoppoints_in_order(line) : await call_tfl.get_line_stoppoints(line)
+  const stoppoints = ordered ? await tfl_api.get_line_stoppoints_in_order(line) : await tfl_api.get_line_stoppoints(line)
   return stoppoints
 
 }
@@ -80,7 +80,7 @@ async function store_stoppoints(line){
    *
    **/
   logger.debug('store_stoppoints')
-  const { data: stoppoints } = await call_tfl.get_line_stoppoints(line)
+  const { data: stoppoints } = await tfl_api.get_line_stoppoints(line)
 
   return  eventhub.publishBatch(stoppoints)
 
@@ -98,7 +98,7 @@ async function store_lines(line) {
    *
    * **/
 
-  const { data: lines } = await call_tfl.get_line_stoppoints_in_order(line)
+  const { data: lines } = await tfl_api.get_line_stoppoints_in_order(line)
   const lines_to_store = lines.map(line => generate_single_line(line)).flat()
 
   //const flat_lines = lines_to_store.flat()
