@@ -56,6 +56,7 @@ const add_stoppoint = async (stoppoint, upsert = false) => {
   // submit the query to the graphdb
   //return await client.submit(query)
   // TODO - fix retry logic
+  logger.debug('writing one StopPoint to graphdb')
   return helpers.retry(function(){  client.submit(query) }, 5,2 )
 
 }
