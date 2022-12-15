@@ -35,7 +35,7 @@ expect.extend({
 })
 expect.extend({
   toBeWithinNOf(actual, expected, n) {
-    const pass = Math.abs(actual - expected) < n
+    const pass = Math.abs(actual - expected) <= n
     if (pass) {
       return {
         message: () => `expected ${actual} not to be within ${n} of ${expected}`,
@@ -98,7 +98,6 @@ describe('TfL calls to get disruption', () => {
       axios.get.mockResolvedValue(tfl_api_responses.get_disruption_tube_overground)
       const actual_response = await tfl_api.get_disruption(['tube', 'overground'])
       const expected_response = tfl_sdk_responses.get_disruption_tube_overground
-      fs.writeFileSync('get_disruption_tube_overground.json', JSON.stringify(actual_response))
       expect(actual_response).toMatchObject(expected_response)
     })
     test('calls TFL API to get disruption on tube, with detail', async () => {
@@ -141,6 +140,39 @@ describe('TfL calls to get disruption', () => {
       const first_response = await tfl_api.get_disruption(['tube', 'overground'], true)
       const actual_response = await tfl_api.get_disruption(['tube', 'overground'], true)
       const expected_response = tfl_sdk_responses.get_disruption_tube_overground_detailed
+      test_first_and_actual_response(first_response, actual_response, expected_response)
+    })
+  })
+})
+
+describe('TfL calls to get lines for a mode', () => {
+  describe('calls without caching', () => {
+    test('calls TFL API to get lines for "tube"', async () => {
+      axios.get.mockResolvedValue(tfl_api_responses.get_lines_for_mode_tube)
+      const actual_response = await tfl_api.get_lines_for_mode(['tube'])
+      const expected_response = tfl_sdk_responses.get_lines_for_mode_tube
+      expect(actual_response).toMatchObject(expected_response)
+    })
+    test('calls TFL API to get lines for "tube, overground"', async () => {
+      axios.get.mockResolvedValue(tfl_api_responses.get_lines_for_mode_tube_overground)
+      const actual_response = await tfl_api.get_lines_for_mode(['tube', 'overground'])
+      const expected_response = tfl_sdk_responses.get_lines_for_mode_tube_overground
+      expect(actual_response).toMatchObject(expected_response)
+    })
+  })
+  describe('calls with caching', () => {
+    test('calls TFL API to get lines for "tube"', async () => {
+      axios.get.mockResolvedValue(tfl_api_responses.get_lines_for_mode_tube)
+      const first_response = await tfl_api.get_lines_for_mode(['tube'])
+      const actual_response = await tfl_api.get_lines_for_mode(['tube'])
+      const expected_response = tfl_sdk_responses.get_lines_for_mode_tube
+      test_first_and_actual_response(first_response, actual_response, expected_response)
+    })
+    test('calls TFL API to get lines for "tube, overground"', async () => {
+      axios.get.mockResolvedValue(tfl_api_responses.get_lines_for_mode_tube_overground)
+      const first_response = await tfl_api.get_lines_for_mode(['tube', 'overground'])
+      const actual_response = await tfl_api.get_lines_for_mode(['tube', 'overground'])
+      const expected_response = tfl_sdk_responses.get_lines_for_mode_tube_overground
       test_first_and_actual_response(first_response, actual_response, expected_response)
     })
   })

@@ -26,6 +26,8 @@ const get_disruption_tube = get_data('get_disruption_tube[disrupted].json')
 const get_disruption_tube_overground = get_data('get_disruption_tube_overground[disrupted].json')
 const get_disruption_tube_detailed = get_data('get_disruption_tube_detailed[disrupted].json')
 const get_disruption_tube_overground_detailed = get_data('get_disruption_tube_overground_detailed[disrupted].json')
+const get_lines_for_mode_tube = get_data('get_lines_for_mode_tube.json')
+const get_lines_for_mode_tube_overground = get_data('get_lines_for_mode_tube_overground.json')
 
 
 module.exports = {
@@ -34,5 +36,7 @@ module.exports = {
   get_disruption_tube,
   get_disruption_tube_overground,
   get_disruption_tube_detailed,
-  get_disruption_tube_overground_detailed
+  get_disruption_tube_overground_detailed,
+  get_lines_for_mode_tube,
+  get_lines_for_mode_tube_overground
 }

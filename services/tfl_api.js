@@ -27,6 +27,7 @@ const add_search_params = (url, params) => {
    *
    */
   let new_params = params
+  // eslint-disable-next-line eqeqeq
   Object.keys(new_params).forEach((key) => ((new_params[key] == undefined) ? delete new_params[key] : {}))
   let new_url = url
   for (var p in new_params)
@@ -162,8 +163,6 @@ function summarise_lineStatuses(line) {
   }
 }
 
-
-
 function extract_disruption(tfl_response_data) {
   /**
    * extracts disruption data from tfl response
@@ -213,10 +212,6 @@ async function get_disruption(for_modes, detailed = false) {
   }
 }
 
-
-
-
-
 async function get_line_stoppoints(line_id) {
   /**
    * fetches stoppoints for a given line in order
@@ -241,7 +236,6 @@ async function get_line_stoppoints(line_id) {
     return { data: stoppoint_data, ttl: line_stoppoints.ttl }
   }
 }
-
 
 async function get_line_stoppoints_in_order(line_id) {
   /**
@@ -274,7 +268,6 @@ async function get_line_stoppoints_in_order(line_id) {
     return { data: directional_points, ttl: line_stoppoints.ttl }
   }
 }
-
 
 function get_directional_stoppoints(stoppoint) {
 
