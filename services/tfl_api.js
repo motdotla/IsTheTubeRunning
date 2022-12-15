@@ -27,7 +27,7 @@ const add_search_params = (url, params) => {
    *
    */
   let new_params = params
-  Object.keys(new_params).forEach((key) => (new_params[key] === undefined ? delete new_params[key] : {}))
+  Object.keys(new_params).forEach((key) => ((new_params[key] == undefined) ? delete new_params[key] : {}))
   let new_url = url
   for (var p in new_params)
     if (Object.prototype.hasOwnProperty.call(new_params, p)) {
