@@ -35,7 +35,7 @@ expect.extend({
 })
 expect.extend({
   toBeWithinNOf(actual, expected, n) {
-    const pass = (actual >= expected - n && actual <= expected + n)
+    const pass = Math.abs(actual - expected) < n
     if (pass) {
       return {
         message: () => `expected ${actual} not to be within ${n} of ${expected}`,
