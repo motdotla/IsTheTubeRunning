@@ -112,6 +112,12 @@ describe('TfL calls to get disruption', () => {
       const expected_response = tfl_sdk_responses.get_disruption_tube_overground_detailed
       expect(actual_response).toMatchObject(expected_response)
     })
+    test('calls TFL API to get disruption with string for_modes, no detail', async () => {
+      axios.get.mockResolvedValue(tfl_api_responses.get_disruption_tube)
+      await expect(tfl_api.get_disruption('tube'))
+        .rejects
+        .toThrowError('must be an array')
+    })
   })
   describe('calls with caching', () => {
     test('calls TFL API to get disruption on tube, no detail', async () => {

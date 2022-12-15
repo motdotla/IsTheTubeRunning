@@ -257,11 +257,11 @@ async function get_line_stoppoints_in_order(line_id) {
     const line_stoppoints_api_query = `Line/${line_id}/Route/Sequence/all`
     const line_stoppoints = await query(line_stoppoints_api_query, { excludeCrowding: true })
     // extract the stoppoints from the line_stoppoints data
-    if (!line_stoppoints.data.stopPointSequences) {
+    /*if (!line_stoppoints.data.stopPointSequences) {
       logger.debug('line_stoppoints.data.stopPointSequences', line_stoppoints.data.stopPointSequences, line_stoppoints.data, line_id)
       throw new Error('line_stoppoints.data.stopPointSequences is undefined')
 
-    }
+    }*/
     const directional_points = line_stoppoints.data.stopPointSequences.map(sp => get_directional_stoppoints(sp))
 
     query_cache.set(cache_key, directional_points, line_stoppoints.ttl)
