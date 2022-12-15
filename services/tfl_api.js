@@ -36,17 +36,16 @@ const add_search_params = (url, params) => {
   return new_url
 }
 
-const structure_cached_value = (cached_value, cache_key) => {
+const structure_cached_value = (cached_value, cache_ttl) => {
   /**
    * structures cached value for return
    *
    * @param {Object} cached_value - the cached value
-   * @param {String} cache_key - the cache key
+   * @param {Number} cache_ttl - the cache key
    * @returns {Object} - the structured cached value with .data and .ttl properties
    *
    */
 
-  const cache_ttl = query_cache.getTtl( cache_key )
   const currentDate = new Date()
   let remaining_ttl = 0
   if (cache_ttl > 0) {
@@ -112,7 +111,7 @@ async function get_disruption(detailed = false, for_modes = ['tube', 'dlr', 'ove
 
   if (cached_value) {
     logger.debug(`${cache_key} cache hit`)
-    return structure_cached_value(cached_value, cache_key)
+    return structure_cached_value(cached_value, query_cache.getTtl( cache_key ))
   } else {
     logger.debug(`${cache_key} cache miss`)
     const disruption_api_query = `Line/Mode/${modes}/Status`
@@ -139,7 +138,7 @@ async function get_line_stoppoints(line_id) {
   if (cached_value) {
     logger.debug(`${cache_key} cache hit`)
 
-    return structure_cached_value(cached_value, cache_key)
+    return structure_cached_value(cached_value, query_cache.getTtl( cache_key ))
   }
   else {
     logger.debug(`${cache_key} cache miss`)
@@ -165,7 +164,7 @@ async function get_line_stoppoints_in_order(line_id) {
   if (cached_value) {
     logger.debug(`${cache_key} cache hit`)
 
-    return structure_cached_value(cached_value, cache_key)
+    return structure_cached_value(cached_value, query_cache.getTtl( cache_key ))
   }
   else {
     logger.debug(`${cache_key} cache miss`)
@@ -228,7 +227,7 @@ async function get_lines_for_mode(modes = ['tube', 'dlr', 'overground']) {
   if (cached_value) {
     logger.debug(`${cache_key} cache hit`)
 
-    return structure_cached_value(cached_value, cache_key)
+    return structure_cached_value(cached_value, query_cache.getTtl( cache_key ))
   }
   else {
     logger.debug(`${cache_key} cache miss`)
