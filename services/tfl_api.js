@@ -49,7 +49,7 @@ const structure_cached_value = (cached_value, cache_ttl) => {
   const currentDate = new Date()
   let remaining_ttl = 0
   if (cache_ttl > 0) {
-    remaining_ttl = Math.floor((cache_ttl - currentDate.getTime())/1000)
+    remaining_ttl = Math.floor((cache_ttl - currentDate.getTime()) / 1000)
   }
   else {
     remaining_ttl = cache_ttl
@@ -97,7 +97,93 @@ async function query(querystring, params = null) {
   return { data, ttl }
 }
 
-async function get_disruption(detailed = false, for_modes = ['tube', 'dlr', 'overground']) {
+
+
+function summarise_lineStatuses(line) {
+  /**
+   * summarises disruption data for a given line
+   * @param {Object} linestatus - the line to summarise
+   * @returns {Object} - the summarised disruption data
+   *
+   */
+  //TODO: extract [lineStatuses] from line as a map
+  return line.lineStatuses.map((lineStatus) => {
+    const base_disruption = create_base_disruption(lineStatus)
+    let disrupted_route = {}
+    if (lineStatus.disruption !== undefined && lineStatus.disruption.affectedRoutes !== undefined && lineStatus.disruption.affectedRoutes.length > 0) {
+      disrupted_route = summarise_disruption_routes(lineStatus.disruption.affectedRoutes)
+    }
+    console.log('lineStatus.disruption', lineStatus.disruption, 'disrupted_route', disrupted_route)
+    return {
+      ...base_disruption,
+      // if disruption is not empty, return it, otherwise return false
+      ...(disrupted_route !== {}) && { affectedRoutes: disrupted_route } ,
+    }
+  })
+
+  function create_base_disruption(lineStatus) {
+    return {
+      status: lineStatus.statusSeverityDescription,
+      reason: lineStatus.reason,
+      severity: lineStatus.statusSeverity,
+      validityPeriods: lineStatus.validityPeriods.map((validityPeriod) => {
+        return {
+          from: validityPeriod.fromDate,
+          to: validityPeriod.toDate
+        }
+      })
+    }
+  }
+
+  function summarise_disruption_routes(affected_routes) {
+    /**
+     * summarises teh affectedRoutes array
+     * @param {Array} affected_routes - the affectedRoutes array
+     * @returns {Array} - the summarised affectedRoutes array
+     *
+     */
+
+    return affected_routes.map((affected_route) => {
+      return {
+        id: affected_route.id,
+        name: affected_route.name,
+        direction: affected_route.direction,
+        originationName: affected_route.originationName,
+        destinationName: affected_route.destinationName,
+        isEntireRouteSection: affected_route.isEntireRouteSection,
+        routeSections: affected_route.routeSectionNaptanEntrySequence.map((routeSection) => {
+          return {
+            ordinal: routeSection.ordinal,
+            naptanId: routeSection.stopPoint.naptanId,
+            name: routeSection.stopPoint.commonName
+          }
+        })
+      }
+    })
+  }
+}
+
+
+
+function extract_disruption(tfl_response_data) {
+  /**
+   * extracts disruption data from tfl response
+   *
+   * @param {Object} tfl_response - the response from the tfl api
+   * @returns {Object} - the disruption data from the tfl response
+   */
+  const disruption_data = tfl_response_data.map((line) => {
+    return {
+      id: line.id,
+      name: line.name,
+      modeName: line.modeName,
+      disruptions: summarise_lineStatuses(line)
+    }
+  })
+  return disruption_data
+}
+
+async function get_disruption(for_modes, detailed = false) {
   /**
    * fetches disruptions from tfl for given modes
    *
@@ -105,17 +191,24 @@ async function get_disruption(detailed = false, for_modes = ['tube', 'dlr', 'ove
    * @param {Array} for_modes - array of modes to fetch disruptions for
    * @returns {Array} - array of lines with disruption data
    */
+  if (!Array.isArray(for_modes)) {
+    throw new Error('for_modes must be an array')
+  }
   const modes = for_modes.join(',')
   const cache_key = `disruption-${modes}-${detailed}`
   const cached_value = query_cache.get(cache_key)
 
   if (cached_value) {
     logger.debug(`${cache_key} cache hit`)
-    return structure_cached_value(cached_value, query_cache.getTtl( cache_key ))
+    return structure_cached_value(cached_value, query_cache.getTtl(cache_key))
   } else {
     logger.debug(`${cache_key} cache miss`)
     const disruption_api_query = `Line/Mode/${modes}/Status`
-    const disruption = await query(disruption_api_query, { detail: detailed })
+    const api_response = await query(disruption_api_query, { detail: detailed })
+    const disruption = {
+      data: extract_disruption(api_response.data),
+      ttl: api_response.ttl
+    }
     query_cache.set(cache_key, disruption.data, disruption.ttl)
     return disruption
   }
@@ -138,7 +231,7 @@ async function get_line_stoppoints(line_id) {
   if (cached_value) {
     logger.debug(`${cache_key} cache hit`)
 
-    return structure_cached_value(cached_value, query_cache.getTtl( cache_key ))
+    return structure_cached_value(cached_value, query_cache.getTtl(cache_key))
   }
   else {
     logger.debug(`${cache_key} cache miss`)
@@ -164,17 +257,17 @@ async function get_line_stoppoints_in_order(line_id) {
   if (cached_value) {
     logger.debug(`${cache_key} cache hit`)
 
-    return structure_cached_value(cached_value, query_cache.getTtl( cache_key ))
+    return structure_cached_value(cached_value, query_cache.getTtl(cache_key))
   }
   else {
     logger.debug(`${cache_key} cache miss`)
     const line_stoppoints_api_query = `Line/${line_id}/Route/Sequence/all`
     const line_stoppoints = await query(line_stoppoints_api_query, { excludeCrowding: true })
     // extract the stoppoints from the line_stoppoints data
-    if (!line_stoppoints.data.stopPointSequences){
+    if (!line_stoppoints.data.stopPointSequences) {
       logger.debug('line_stoppoints.data.stopPointSequences', line_stoppoints.data.stopPointSequences, line_stoppoints.data, line_id)
       throw new Error('line_stoppoints.data.stopPointSequences is undefined')
-      
+
     }
     const directional_points = line_stoppoints.data.stopPointSequences.map(sp => get_directional_stoppoints(sp))
 
@@ -208,7 +301,8 @@ function extract_stoppoints_from_stoppoint_array(stoppoint_array) {
       lon: sp['lon'],
       modes: sp['modes'],
       lines: sp['lines'].map(l => l['id'])
-    }}
+    }
+  }
   )
 }
 
@@ -227,7 +321,7 @@ async function get_lines_for_mode(modes = ['tube', 'dlr', 'overground']) {
   if (cached_value) {
     logger.debug(`${cache_key} cache hit`)
 
-    return structure_cached_value(cached_value, query_cache.getTtl( cache_key ))
+    return structure_cached_value(cached_value, query_cache.getTtl(cache_key))
   }
   else {
     logger.debug(`${cache_key} cache miss`)
@@ -239,14 +333,17 @@ async function get_lines_for_mode(modes = ['tube', 'dlr', 'overground']) {
         name: line['name'],
         modeName: line['modeName'],
         serviceTypes: line['serviceTypes'].map((st) => st['name'])
-      }})
+      }
+    })
 
     query_cache.set(cache_key, all_lines_summarised, all_lines.ttl)
     return { data: all_lines_summarised, ttl: all_lines.ttl }
   }
 }
 
-module.exports = { get_disruption,
+module.exports = {
+  get_disruption,
   get_line_stoppoints,
   get_lines_for_mode,
-  get_line_stoppoints_in_order }
+  get_line_stoppoints_in_order
+}

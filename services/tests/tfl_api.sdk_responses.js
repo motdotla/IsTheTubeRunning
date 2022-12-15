@@ -22,8 +22,17 @@ const get_data = (filename) => {
 
 const get_line_stoppoints_in_order_victoria_no_crowding = get_data('get_line_stoppoints_in_order_victoria_no_crowding.json')
 const get_line_stoppoints_victoria = get_data('get_line_stoppoints_victoria.json')
+const get_disruption_tube = get_data('get_disruption_tube[disrupted].json')
+const get_disruption_tube_overground = get_data('get_disruption_tube_overground[disrupted].json')
+const get_disruption_tube_detailed = get_data('get_disruption_tube_detailed[disrupted].json')
+const get_disruption_tube_overground_detailed = get_data('get_disruption_tube_overground_detailed[disrupted].json')
+
 
 module.exports = {
   get_line_stoppoints_in_order_victoria_no_crowding,
-  get_line_stoppoints_victoria
+  get_line_stoppoints_victoria,
+  get_disruption_tube,
+  get_disruption_tube_overground,
+  get_disruption_tube_detailed,
+  get_disruption_tube_overground_detailed
 }

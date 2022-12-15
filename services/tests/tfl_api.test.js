@@ -58,7 +58,7 @@ describe('TfL calls to get line stoppoints', () => {
       const expected_response = tfl_sdk_responses.get_line_stoppoints_in_order_victoria_no_crowding
       const first_response = await tfl_api.get_line_stoppoints_in_order('victoria')
       const actual_response = await tfl_api.get_line_stoppoints_in_order('victoria')
-      expect(first_response).toMatchObject(expected_response)
+      expect(first_response.data).toMatchObject(expected_response.data)
       expect(actual_response['data']).toMatchObject(expected_response['data'])
       expect(actual_response['ttl']/10).toBeLessThan(expected_response['ttl'])
       expect(actual_response['ttl']/10).toBeAround(expected_response['ttl']/10,0)
@@ -68,14 +68,47 @@ describe('TfL calls to get line stoppoints', () => {
       const expected_response = tfl_sdk_responses.get_line_stoppoints_victoria
       const first_response = await tfl_api.get_line_stoppoints('victoria')
       const actual_response = await tfl_api.get_line_stoppoints('victoria')
-      expect(first_response).toMatchObject(expected_response)
+      expect(first_response.data).toMatchObject(expected_response.data)
       expect(actual_response['data']).toMatchObject(expected_response['data'])
       expect(actual_response['ttl']/10).toBeLessThan(expected_response['ttl'])
       expect(actual_response['ttl']/10).toBeAround(expected_response['ttl']/10,0)
-
     })
   })
 })
+
+describe('TfL calls to get disruption', () => {
+  describe('calls without caching', () => {
+    test('calls TFL API to get disruption on tube, no detail', async () => {
+      axios.get.mockResolvedValue(tfl_api_responses.get_disruption_tube)
+      const actual_response = await tfl_api.get_disruption(['tube'])
+      const expected_response = tfl_sdk_responses.get_disruption_tube
+      expect(actual_response).toMatchObject(expected_response)
+    })
+
+    test('calls TFL API to get disruption on tube,overground, no detail', async () => {
+      axios.get.mockResolvedValue(tfl_api_responses.get_disruption_tube_overground)
+      const actual_response = await tfl_api.get_disruption(['tube','overground'])
+      const expected_response = tfl_sdk_responses.get_disruption_tube_overground
+      fs.writeFileSync('get_disruption_tube_overground.json', JSON.stringify(actual_response))
+      expect(actual_response).toMatchObject(expected_response)
+    })
+    test('calls TFL API to get disruption on tube, with detail', async () => {
+      axios.get.mockResolvedValue(tfl_api_responses.get_disruption_tube_detailed)
+      const actual_response = await tfl_api.get_disruption(['tube'], true)
+      const expected_response = tfl_sdk_responses.get_disruption_tube_detailed
+      expect(actual_response).toMatchObject(expected_response)
+    })
+    test('calls TFL API to get disruption on tube,overground, with detail', async () => {
+      axios.get.mockResolvedValue(tfl_api_responses.get_disruption_tube_overground_detailed)
+      const actual_response = await tfl_api.get_disruption(['tube','overground'], true)
+      const expected_response = tfl_sdk_responses.get_disruption_tube_overground_detailed
+      expect(actual_response).toMatchObject(expected_response)
+    })
+  })
+})
+
+
+
 
 describe('test helper functions', () => {
   describe('extract s-maxage from header', () => {
