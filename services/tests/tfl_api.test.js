@@ -33,6 +33,22 @@ expect.extend({
     }
   }
 })
+expect.extend({
+  toBeWithinNOf(actual, expected, n) {
+    const pass = (actual >= expected - n && actual <= expected + n)
+    if (pass) {
+      return {
+        message: () => `expected ${actual} not to be within ${n} of ${expected}`,
+        pass: true
+      }
+    } else {
+      return {
+        message: () => `expected ${actual} to be within ${n} of ${expected}`,
+        pass: false
+      }
+    }
+  }
+})
 
 
 jest.mock('axios')
@@ -58,20 +74,14 @@ describe('TfL calls to get line stoppoints', () => {
       const expected_response = tfl_sdk_responses.get_line_stoppoints_in_order_victoria_no_crowding
       const first_response = await tfl_api.get_line_stoppoints_in_order('victoria')
       const actual_response = await tfl_api.get_line_stoppoints_in_order('victoria')
-      expect(first_response.data).toMatchObject(expected_response.data)
-      expect(actual_response['data']).toMatchObject(expected_response['data'])
-      expect(actual_response['ttl']/10).toBeLessThan(expected_response['ttl'])
-      expect(actual_response['ttl']/10).toBeAround(expected_response['ttl']/10,0)
+      test_first_and_actual_response(first_response, actual_response, expected_response)
     })
     test('calls TFL API to get default Victoria line trains', async () => {
       axios.get.mockResolvedValue(tfl_api_responses.get_line_stoppoints_victoria)
       const expected_response = tfl_sdk_responses.get_line_stoppoints_victoria
       const first_response = await tfl_api.get_line_stoppoints('victoria')
       const actual_response = await tfl_api.get_line_stoppoints('victoria')
-      expect(first_response.data).toMatchObject(expected_response.data)
-      expect(actual_response['data']).toMatchObject(expected_response['data'])
-      expect(actual_response['ttl']/10).toBeLessThan(expected_response['ttl'])
-      expect(actual_response['ttl']/10).toBeAround(expected_response['ttl']/10,0)
+      test_first_and_actual_response(first_response, actual_response, expected_response)
     })
   })
 })
@@ -84,10 +94,9 @@ describe('TfL calls to get disruption', () => {
       const expected_response = tfl_sdk_responses.get_disruption_tube
       expect(actual_response).toMatchObject(expected_response)
     })
-
     test('calls TFL API to get disruption on tube,overground, no detail', async () => {
       axios.get.mockResolvedValue(tfl_api_responses.get_disruption_tube_overground)
-      const actual_response = await tfl_api.get_disruption(['tube','overground'])
+      const actual_response = await tfl_api.get_disruption(['tube', 'overground'])
       const expected_response = tfl_sdk_responses.get_disruption_tube_overground
       fs.writeFileSync('get_disruption_tube_overground.json', JSON.stringify(actual_response))
       expect(actual_response).toMatchObject(expected_response)
@@ -100,14 +109,50 @@ describe('TfL calls to get disruption', () => {
     })
     test('calls TFL API to get disruption on tube,overground, with detail', async () => {
       axios.get.mockResolvedValue(tfl_api_responses.get_disruption_tube_overground_detailed)
-      const actual_response = await tfl_api.get_disruption(['tube','overground'], true)
+      const actual_response = await tfl_api.get_disruption(['tube', 'overground'], true)
       const expected_response = tfl_sdk_responses.get_disruption_tube_overground_detailed
       expect(actual_response).toMatchObject(expected_response)
     })
   })
+  describe('calls with caching', () => {
+    test('calls TFL API to get disruption on tube, no detail', async () => {
+      axios.get.mockResolvedValue(tfl_api_responses.get_disruption_tube)
+      const first_response = await tfl_api.get_disruption(['tube'])
+      const actual_response = await tfl_api.get_disruption(['tube'])
+      const expected_response = tfl_sdk_responses.get_disruption_tube
+      test_first_and_actual_response(first_response, actual_response, expected_response)
+    })
+    test('calls TFL API to get disruption on tube,overground, no detail', async () => {
+      axios.get.mockResolvedValue(tfl_api_responses.get_disruption_tube_overground)
+      const first_response = await tfl_api.get_disruption(['tube', 'overground'])
+      const actual_response = await tfl_api.get_disruption(['tube', 'overground'])
+      const expected_response = tfl_sdk_responses.get_disruption_tube_overground
+      test_first_and_actual_response(first_response, actual_response, expected_response)
+    })
+    test('calls TFL API to get disruption on tube, with detail', async () => {
+      axios.get.mockResolvedValue(tfl_api_responses.get_disruption_tube_detailed)
+      const first_response = await tfl_api.get_disruption(['tube'], true)
+      const actual_response = await tfl_api.get_disruption(['tube'], true)
+      const expected_response = tfl_sdk_responses.get_disruption_tube_detailed
+      test_first_and_actual_response(first_response, actual_response, expected_response)
+    })
+    test('calls TFL API to get disruption on tube,overground, with detail', async () => {
+      axios.get.mockResolvedValue(tfl_api_responses.get_disruption_tube_overground_detailed)
+      const first_response = await tfl_api.get_disruption(['tube', 'overground'], true)
+      const actual_response = await tfl_api.get_disruption(['tube', 'overground'], true)
+      const expected_response = tfl_sdk_responses.get_disruption_tube_overground_detailed
+      test_first_and_actual_response(first_response, actual_response, expected_response)
+    })
+  })
 })
 
-
+function test_first_and_actual_response(first_response, actual_response, expected_response) {
+  expect(first_response['data']).toMatchObject(expected_response['data'])
+  expect(first_response['ttl']).toBeWithinNOf(expected_response['ttl'], 1)
+  expect(actual_response['data']).toMatchObject(expected_response['data'])
+  expect(actual_response['ttl']).toBeLessThan(expected_response['ttl'])
+  expect(actual_response['ttl']).toBeWithinNOf(expected_response['ttl'], 1)
+}
 
 
 describe('test helper functions', () => {
@@ -143,7 +188,7 @@ describe('test helper functions', () => {
       const expected = -1
       const actual = get_s_maxage(header)
       expect(actual).toBe(expected)
-    } )
+    })
   })
   describe('test add_search_params', () => {
     const add_search_params = tfl_api.__get__('add_search_params')
@@ -200,7 +245,7 @@ describe('test helper functions', () => {
       }
       const actual = structure_cached_value(data, ttl)
       expect(actual['data']).toStrictEqual(data)
-      expect(actual['ttl']/10).toBeAround(expected['ttl']/10, 0)
+      expect(actual['ttl'] / 10).toBeAround(expected['ttl'] / 10, 0)
     })
     test('structure cached value expired (-1) ', () => {
       const data = {
@@ -217,7 +262,7 @@ describe('test helper functions', () => {
       }
       const actual = structure_cached_value(data, ttl)
       expect(actual['data']).toStrictEqual(data)
-      expect(actual['ttl']/10).toBeAround(expected['ttl']/10, 0)
+      expect(actual['ttl'] / 10).toBeAround(expected['ttl'] / 10, 0)
     })
   })
 })

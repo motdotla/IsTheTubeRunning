@@ -113,7 +113,6 @@ function summarise_lineStatuses(line) {
     if (lineStatus.disruption !== undefined && lineStatus.disruption.affectedRoutes !== undefined && lineStatus.disruption.affectedRoutes.length > 0) {
       disrupted_route = summarise_disruption_routes(lineStatus.disruption.affectedRoutes)
     }
-    console.log('lineStatus.disruption', lineStatus.disruption, 'disrupted_route', disrupted_route)
     return {
       ...base_disruption,
       // if disruption is not empty, return it, otherwise return false
