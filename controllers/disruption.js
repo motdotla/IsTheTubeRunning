@@ -34,7 +34,7 @@ async function disruption_detail() {
    * can be quite large - several MB - as it includes every impacted station
    **/
 
-  const disruption = await call_tfl.get_disruption(true)
+  const disruption = await call_tfl.get_disruption(['tube','overground','dlr'],true)
 
   return { disruption }
 
