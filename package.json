@@ -15,7 +15,7 @@
     "node-cache": "^5.1.2"
   },
   "devDependencies": {
-    "babel-plugin-rewire": "^1.2.0",
+    "@types/jest": "^29.2.4",
     "jest": "^29.3.1"
   }
 }

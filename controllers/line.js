@@ -25,11 +25,11 @@ async function stoppoints(line, ordered=false) {
    * Fetches the stoppoints data from TFL by line
    *
    * @param {String} line - line to fetch stoppoints for
-   * @returns {object} - stoppoints.data - array of stoppoints, stoppoints.ttl - ttl of the data
+   * @returns {Promise} - stoppoints.data - array of stoppoints, stoppoints.ttl - ttl of the data
    *
    **/
   console.log('stoppoints', line, ordered)
-  const stoppoints = ordered ? await tfl_api.get_line_stoppoints_in_order(line) : await tfl_api.get_line_stoppoints(line)
+  const stoppoints = ordered ? tfl_api.get_line_stoppoints_in_order(line) : tfl_api.get_line_stoppoints(line)
   return stoppoints
 
 }
