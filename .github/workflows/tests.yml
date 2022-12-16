@@ -13,7 +13,7 @@ jobs:
           node-version: '18'
       - run: npm install
       - run: npm run test:ci
-      - uses: IgnusG/jest-report-action@v{ current version }
+      - uses: IgnusG/jest-report-action@vv2.3.3
         if: always() # Or use "continue-on-error: true" in previous test step
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
