@@ -73,7 +73,8 @@ const mockquery = (url, params) => {
 
   switch (url.toLowerCase()) {
   case 'line/victoria/route/sequence/all':
-    axios.get.mockResolvedValue(responses.get_line_stoppoints_in_order_victoria_no_crowding)
+    //TODO add support for crowding
+    axios.get.mockResolvedValue(responses.get_line_victoria_route_sequence_all_no_crowding)
     return originalModule.query(url, params)
 
   case 'line/victoria/stoppoints':
@@ -82,26 +83,26 @@ const mockquery = (url, params) => {
 
   case 'line/mode/tube/status':
     if (check_params(params, { detailed: 'true' })) {
-      axios.get.mockResolvedValue(responses.get_disruption_tube_detailed)
+      axios.get.mockResolvedValue(responses.get_line_mode_tube_status_detail_true_disrupted)
     } else {
-      axios.get.mockResolvedValue(responses.get_disruption_tube)
+      axios.get.mockResolvedValue(responses.get_line_mode_tube_status_detail_false_disrupted)
     }
     return originalModule.query(url, params)
 
   case 'line/mode/tube,overground/status':
     if (check_params(params, { detailed: 'true' })) {
-      axios.get.mockResolvedValue(responses.get_disruption_tube_overground_detailed)
+      axios.get.mockResolvedValue(responses.get_line_mode_tube_overground_status_detail_true_disrupted)
     } else {
-      axios.get.mockResolvedValue(responses.get_disruption_tube_overground)
+      axios.get.mockResolvedValue(responses.get_line_mode_tube_overground_status_detail_false_disrupted)
     }
     return originalModule.query(url, params)
 
   case 'line/mode/tube/route':
-    axios.get.mockResolvedValue(responses.get_lines_for_mode_tube)
+    axios.get.mockResolvedValue(responses.get_line_mode_tube_route)
     return originalModule.query(url, params)
 
   case 'line/mode/tube,overground/route':
-    axios.get.mockResolvedValue(responses.get_lines_for_mode_tube_overground)
+    axios.get.mockResolvedValue(responses.get_line_mode_tube_overground_route)
     return originalModule.query(url, params)
 
   default:
