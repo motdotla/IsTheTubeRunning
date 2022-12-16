@@ -20,56 +20,38 @@ const get_data = (filename) => {
 // results for get_line_stoppoints_in_order()
 // `Line/${line_id}/Route/Sequence/all`
 // --> victoria line
-// `Line/victoria/Route/Sequence/all`
-const get_line_victoria_route_sequence_all_no_crowding = {
-  headers: { 'cache-control': 'public, must-revalidate, max-age=43200, s-maxage=86400' },
-  data: get_data('get_line_victoria_route_sequence_all(excludeCrowding).json')
-}
+// `Line/victoria/Route/Sequence/all?excludeCrowding=true`
+const get_line_victoria_route_sequence_all_no_crowding = get_data('get_line_victoria_route_sequence_all(excludeCrowding).json') 
 
 // results for get_line_stoppoints()
 //`Line/${line_id}/StopPoints`
 //`Line/victoria/StopPoints`
-const get_line_stoppoints_victoria = {
-  headers: { 'cache-control': 'public, must-revalidate, max-age=43200, s-maxage=86400' },
-  data: get_data('get_line_victoria_stoppoints.json')
-}
+const get_line_stoppoints_victoria = get_data('get_line_victoria_stoppoints.json')
 
 // results for get_disruption()
 // detail: false
 // `Line/Mode/tube/Status`
-const get_line_mode_tube_status_detail_false_disrupted = {
-  headers: { 'cache-control': 'public, must-revalidate, max-age=30, s-maxage=60' },
-  data: get_data('get_line_mode_tube_status(detail-false)[disrupted].json')
-}
+const get_line_mode_tube_status_detail_false_disrupted = get_data('get_line_mode_tube_status(detail-false)[disrupted].json')
+
 //`Line/Mode/tube,overground/Status`
-const get_line_mode_tube_overground_status_detail_false_disrupted = {
-  headers: { 'cache-control': 'public, must-revalidate, max-age=30, s-maxage=60' },
-  data: get_data('get_line_mode_tube,overground_status(detail-false)[disrupted].json')
-}
+const get_line_mode_tube_overground_status_detail_false_disrupted = get_data('get_line_mode_tube,overground_status(detail-false)[disrupted].json')
+
 // detail: true
 // `Line/Mode/tube/Status?detailed=true`
-const get_line_mode_tube_status_detail_true_disrupted = {
-  headers: { 'cache-control': 'public, must-revalidate, max-age=30, s-maxage=60' },
-  data: get_data('get_line_mode_tube_status(detail-true)[disrupted].json')
-}
+const get_line_mode_tube_status_detail_true_disrupted = get_data('get_line_mode_tube_status(detail-true)[disrupted].json')
+
 // `Line/Mode/tube,overground/Status?detailed=true`
-const get_line_mode_tube_overground_status_detail_true_disrupted = {
-  headers: { 'cache-control': 'public, must-revalidate, max-age=30, s-maxage=60' },
-  data: get_data('get_line_mode_tube,overground_status(detail-true)[disrupted].json')
-}
+const get_line_mode_tube_overground_status_detail_true_disrupted = get_data('get_line_mode_tube,overground_status(detail-true)[disrupted].json')
+
 
 // get_lines_for_mode()
 // `Line/Mode/${modes}/Route`
 // `Line/Mode/tube/Route`
-const get_line_mode_tube_route = {
-  headers: { 'cache-control': 'public, must-revalidate, max-age=43200, s-maxage=86400' },
-  data: get_data('get_line_mode_tube_route.json')
-}
+const get_line_mode_tube_route = get_data('get_line_mode_tube_route.json')
+
 // `Line/Mode/tube,overground/Route`
-const get_line_mode_tube_overground_route = {
-  headers: { 'cache-control': 'public, must-revalidate, max-age=43200, s-maxage=86400' },
-  data: get_data('get_line_mode_tube,overground_route.json')
-}
+const get_line_mode_tube_overground_route =  get_data('get_line_mode_tube,overground_route.json')
+
 
 module.exports = {
   get_line_victoria_route_sequence_all_no_crowding,

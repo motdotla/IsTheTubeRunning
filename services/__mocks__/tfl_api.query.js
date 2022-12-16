@@ -17,7 +17,11 @@ const mockquery = (url, params) => {
   switch (url.toLowerCase()) {
   case 'line/victoria/route/sequence/all':
     //TODO add support for crowding
-    axios.get.mockResolvedValue(responses.get_line_victoria_route_sequence_all_no_crowding)
+    if (check_params(params, { excludeCrowding: true })) {
+      axios.get.mockResolvedValue(responses.get_line_victoria_route_sequence_all_no_crowding)
+    } else {
+      throw new Error('crowding not supported on mock line/victoria/route/sequence/all')
+    }
     return originalModule.query(url, params)
 
   case 'line/victoria/stoppoints':
