@@ -17,7 +17,7 @@ async function lines_for_mode(mode) {
    **/
 
   const lines = await tfl_api.get_lines_for_mode(mode)
-  return { lines }
+  return lines
 }
 
 async function stoppoints(line, ordered=false) {

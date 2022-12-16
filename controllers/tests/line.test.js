@@ -47,7 +47,6 @@ describe('line controller gets stoppoints', () => {
   })
 })
 describe('get the valid lines for a given mode', () => {
-
   test('gets lines for tube', async () => {
     const expected_response = expected_results.lines_for_mode_tube
     const actual_response = await line.lines_for_mode(['tube'])
