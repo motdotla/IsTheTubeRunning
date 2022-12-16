@@ -2,7 +2,7 @@ const tfl_api = require('../services/tfl_api')
 const logger = require('../utils/logger')
 const eventhub = require('../services/eventhub')
 // const graph = require('../services/graphdb')
-const helpers = require('../utils/helpers')
+// const helpers = require('../utils/helpers')
 
 // a line (in our context) is a list of stoppoints  connected by route steps. A route step links exactly two stoppoints in a specific direction.
 

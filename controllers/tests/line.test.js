@@ -1,3 +1,4 @@
+
 const line = require('../line')
 jest.mock('../../services/tfl_api.query')
 
@@ -5,21 +6,10 @@ const fs = require('fs')
 
 const expected_results = require('./line.expected')
 
+const extended_tests = require('../../tests/extendExpects')
+
 expect.extend({
-  toBeWithinNOf(actual, expected, n) {
-    const pass = Math.abs(actual - expected) <= n
-    if (pass) {
-      return {
-        message: () => `expected ${actual} not to be within ${n} of ${expected}`,
-        pass: true
-      }
-    } else {
-      return {
-        message: () => `expected ${actual} to be within ${n} of ${expected}`,
-        pass: false
-      }
-    }
-  }
+  ...extended_tests
 })
 
 function test_actual_response(actual_response, expected_response) {

@@ -16,40 +16,12 @@ const calculate_remaining_time = (expected_ttl) => {
   const t = new Date()
   return t.setSeconds(t.getSeconds() + expected_ttl)
 }
+const extended_tests = require('../../tests/extendExpects')
 
-//https://stackoverflow.com/questions/53369407/include-tobecloseto-in-jest-tomatchobject
 expect.extend({
-  toBeAround(actual, expected, precision = 2) {
-    const pass = Math.abs(expected - actual) < Math.pow(10, -precision) / 2
-    if (pass) {
-      return {
-        message: () => `expected ${actual} not to be around ${expected}`,
-        pass: true
-      }
-    } else {
-      return {
-        message: () => `expected ${actual} to be around ${expected}`,
-        pass: false
-      }
-    }
-  }
+  ...extended_tests
 })
-expect.extend({
-  toBeWithinNOf(actual, expected, n) {
-    const pass = Math.abs(actual - expected) <= n
-    if (pass) {
-      return {
-        message: () => `expected ${actual} not to be within ${n} of ${expected}`,
-        pass: true
-      }
-    } else {
-      return {
-        message: () => `expected ${actual} to be within ${n} of ${expected}`,
-        pass: false
-      }
-    }
-  }
-})
+
 
 
 function test_first_and_actual_response(first_response, actual_response, expected_response) {
