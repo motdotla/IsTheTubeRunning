@@ -1,12 +1,10 @@
 const { describe, expect, test } = require('@jest/globals')
-const { get_s_maxage, add_search_params } = require('../tfl_api.query')
-
-// const tfl_api_query = require('../tfl_api.query')
+const tfl_api_query = require('../tfl_api.query')
 
 
-describe.skip('test helper functions ', () => {
+describe('test helper functions ', () => {
   describe('extract s-maxage from header', () => {
-  //const get_s_maxage = tfl_api_query.__get__('get_s_maxage')
+    const get_s_maxage = tfl_api_query.__get__('get_s_maxage')
 
     test('s-maxage = 60', () => {
       const header = 'max-age=0, s-maxage=60'
@@ -40,7 +38,7 @@ describe.skip('test helper functions ', () => {
     })
   })
   describe('test add_search_params', () => {
-  // const add_search_params = tfl_api_query.__get__('add_search_params')
+    const add_search_params = tfl_api_query.__get__('add_search_params')
     test('add search params to url', () => {
       const url = new URL('https://api.tfl.gov.uk/Line/victoria/StopPoints')
       const params = {

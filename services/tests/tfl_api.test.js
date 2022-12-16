@@ -194,7 +194,7 @@ describe('TfL tests', () => {
   })
 
   describe('test helper functions', () => {
-/*
+
     describe('structure_cached_value', () => {
       const structure_cached_value = tfl_api.__get__('structure_cached_value')
       test('structure cached value > 0', () => {
@@ -232,6 +232,6 @@ describe('TfL tests', () => {
         expect(actual['ttl'] / 10).toBeAround(expected['ttl'] / 10, 0)
       })
     })
-    */
+
   })
 })
