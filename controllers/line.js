@@ -1,7 +1,7 @@
 const tfl_api = require('../services/tfl_api')
 const logger = require('../utils/logger')
 const eventhub = require('../services/eventhub')
-const graph = require('../services/graphdb')
+// const graph = require('../services/graphdb')
 const helpers = require('../utils/helpers')
 
 // a line (in our context) is a list of stoppoints  connected by route steps. A route step links exactly two stoppoints in a specific direction.
@@ -157,7 +157,7 @@ async function process_line_message(line) {
    *  **/
   // const line = message['body']
   const edge = generate_single_line(line)
-  return helpers.retry(graph.add_line(edge,true),5,2 )
+  // TODO return helpers.retry(graph.add_line(edge,true),5,2 )
 
 }
 
@@ -173,7 +173,7 @@ async function process_stoppoint_message(stoppoint) {
    *
    * */
   // const stoppoint = message['body']
-  return graph.add_stoppoint(stoppoint,true)
+  // TODO return graph.add_stoppoint(stoppoint,true)
 }
 
 
