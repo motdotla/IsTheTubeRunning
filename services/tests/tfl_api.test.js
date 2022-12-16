@@ -56,7 +56,7 @@ function test_first_and_actual_response(first_response, actual_response, expecte
   expect(first_response['data']).toMatchObject(expected_response['data'])
   expect(first_response['ttl']).toBeWithinNOf(expected_response['ttl'], 1)
   expect(actual_response['data']).toMatchObject(expected_response['data'])
-  expect(actual_response['ttl']).toBeLessThan(expected_response['ttl'])
+  expect(actual_response['ttl']).toBeLessThanOrEqual(expected_response['ttl'])
   expect(actual_response['ttl']).toBeWithinNOf(expected_response['ttl'], 1)
 }
 

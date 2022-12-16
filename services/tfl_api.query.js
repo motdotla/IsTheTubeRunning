@@ -67,8 +67,8 @@ async function query(querystring, params = null) {
     logger.debug(`fetching ${tfl_api_url.toString()}`)
     tfl_api_response = await axios.get(tfl_api_url.toString(), { headers: tfl_api_headers })
   } catch (error) {
-    logger.error(error)
-    throw error
+    logger.error(`Error fetching ${tfl_api_url.toString()} : ${error.message}`)
+    throw error // rethrow error
   }
 
   // extract s-maxage from cache-control header

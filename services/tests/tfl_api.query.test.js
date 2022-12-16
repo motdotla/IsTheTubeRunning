@@ -1,9 +1,28 @@
 const { describe, expect, test } = require('@jest/globals')
-const tfl_api_query = require('../tfl_api.query')
+const fs = require('fs')
+const path = require('node:path')
+const helpers = require('../../utils/helpers')
 
+// https://stackoverflow.com/questions/44654210/logical-or-for-expected-results-in-jest
+const expect_or = (...tests) => {
+  try {
+    tests.shift()()
+  } catch (e) {
+    if (tests.length) expect_or(...tests)
+    else throw e
+  }
+}
 
+const load_file = (filename) => {
+  return fs.readFileSync(path.resolve(__dirname, filename), 'utf8')
+}
+
+const get_data = (filename) => {
+  return helpers.jsonParser(load_file(filename))
+}
 
 describe('test helper functions ', () => {
+  const tfl_api_query = require('../tfl_api.query')
   describe('extract s-maxage from header', () => {
     const get_s_maxage = tfl_api_query.__get__('get_s_maxage')
 
@@ -121,5 +140,18 @@ describe('test helper functions ', () => {
       expect(actual).toBe(expected)
     }
     )
+  })
+})
+
+describe('test with a real query to TfL', () => {
+  const { query } = require('../../services/tfl_api.query')
+  test('test with a valid query actually hits the TfL API', async () => {
+    const expected_result = get_data('get_line_meta_modes.json')
+    const actual_result = await query('/Line/Meta/Modes')
+    // check if actual_result toMatchObject either expected_day or expected_night
+    expect(actual_result).toMatchObject(expected_result)
+  })
+  test('throw error on invalid query', async () => {
+    await expect(query('/invalidurl')).rejects.toThrowError('Request failed with status code 404')
   })
 })
