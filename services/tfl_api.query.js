@@ -2,6 +2,8 @@ const config = require('../utils/config')
 const axios = require('axios')
 const logger = require('../utils/logger')
 
+
+
 const get_s_maxage = (cache_control_header) => {
   /**
    * extracts s-maxage from cache-control header
@@ -76,4 +78,4 @@ async function query(querystring, params = null) {
   return { data, ttl }
 }
 
-module.exports = { query} 
+module.exports = { query }

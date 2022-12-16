@@ -167,10 +167,10 @@ async function process_stoppoint_message(stoppoint) {
    * receives a message defining a stoppoint
    * pushes the stoppoint to the graph
    * it will retry up to 5 times with a 2 second delay
-   * 
+   *
    * @param {Object} message - message to process
    * @returns {Promise} - result of publishStoppoints
-   * 
+   *
    * */
   // const stoppoint = message['body']
   return graph.add_stoppoint(stoppoint,true)
