@@ -1,28 +1,20 @@
 const { describe, expect, test } = require('@jest/globals')
-
-
-
 const tfl_api = require('../tfl_api')
-
-
-const query = require('../tfl_api.query')
+//const query = require('../tfl_api.query')
 jest.mock('../tfl_api.query')
-
 const tfl_sdk_responses = require('./tfl_api.sdk_responses')
-
 const fs = require('fs')
 
 const calculate_remaining_time = (expected_ttl) => {
   const t = new Date()
   return t.setSeconds(t.getSeconds() + expected_ttl)
 }
-const extended_tests = require('../../tests/extendExpects')
 
+// add custom matchers
+const extended_tests = require('../../tests/extendExpects')
 expect.extend({
   ...extended_tests
 })
-
-
 
 function test_first_and_actual_response(first_response, actual_response, expected_response) {
   expect(first_response['data']).toMatchObject(expected_response['data'])
