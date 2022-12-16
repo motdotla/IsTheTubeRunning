@@ -32,17 +32,18 @@ const get_line_stoppoints_victoria = get_data('get_line_victoria_stoppoints.json
 // detail: false
 // `Line/Mode/tube/Status`
 const get_line_mode_tube_status_detail_false_disrupted = get_data('get_line_mode_tube_status(detail-false)[disrupted].json')
-
-//`Line/Mode/tube,overground/Status`
-const get_line_mode_tube_overground_status_detail_false_disrupted = get_data('get_line_mode_tube,overground_status(detail-false)[disrupted].json')
-
-// detail: true
 // `Line/Mode/tube/Status?detailed=true`
 const get_line_mode_tube_status_detail_true_disrupted = get_data('get_line_mode_tube_status(detail-true)[disrupted].json')
 
+//`Line/Mode/tube,overground/Status`
+const get_line_mode_tube_overground_status_detail_false_disrupted = get_data('get_line_mode_tube,overground_status(detail-false)[disrupted].json')
 // `Line/Mode/tube,overground/Status?detailed=true`
 const get_line_mode_tube_overground_status_detail_true_disrupted = get_data('get_line_mode_tube,overground_status(detail-true)[disrupted].json')
 
+/// Line/Mode/tube,overground,dlr/Status
+const get_line_mode_tube_overground_dlr_status_detail_false_disrupted = get_data('get_line_mode_tube,overground,dlr_status(detail-false)[disrupted].json')
+/// Line/Mode/tube,overground,dlr/Status?detail=true
+const get_line_mode_tube_overground_dlr_status_detail_true_disrupted = get_data('get_line_mode_tube,overground,dlr_status(detail-true)[disrupted].json')
 
 // get_lines_for_mode()
 // `Line/Mode/${modes}/Route`
@@ -57,9 +58,11 @@ module.exports = {
   get_line_victoria_route_sequence_all_no_crowding,
   get_line_stoppoints_victoria,
   get_line_mode_tube_status_detail_false_disrupted,
-  get_line_mode_tube_overground_status_detail_false_disrupted,
   get_line_mode_tube_status_detail_true_disrupted,
   get_line_mode_tube_overground_status_detail_true_disrupted,
+  get_line_mode_tube_overground_status_detail_false_disrupted,
+  get_line_mode_tube_overground_dlr_status_detail_true_disrupted,
+  get_line_mode_tube_overground_dlr_status_detail_false_disrupted,
   get_line_mode_tube_route,
   get_line_mode_tube_overground_route
 }

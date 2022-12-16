@@ -12,7 +12,12 @@ const get_data = (filename) => {
 
 const line_stoppoints_victoria_true = get_data('line_stoppoints_victoria_true.json') 
 const line_stoppoints_victoria_false = get_data('line_stoppoints_victoria_false.json') 
-
+const lines_for_mode_tube_overground = get_data('lines_for_mode_tube_overground.json')
+const lines_for_mode_overground = get_data('lines_for_mode_overground.json')
+const lines_for_mode_tube = get_data('lines_for_mode_tube.json')
 
 module.exports = { line_stoppoints_victoria_true,
-  line_stoppoints_victoria_false }
+  line_stoppoints_victoria_false,
+  lines_for_mode_tube_overground,
+  lines_for_mode_overground,
+  lines_for_mode_tube }

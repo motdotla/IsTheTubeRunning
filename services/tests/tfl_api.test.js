@@ -1,15 +1,8 @@
 const { describe, expect, test } = require('@jest/globals')
-
-
-
 const tfl_api = require('../tfl_api')
-
-
-const query = require('../tfl_api.query')
+//const query = require('../tfl_api.query')
 jest.mock('../tfl_api.query')
-
 const tfl_sdk_responses = require('./tfl_api.sdk_responses')
-
 const fs = require('fs')
 
 const calculate_remaining_time = (expected_ttl) => {
@@ -17,40 +10,11 @@ const calculate_remaining_time = (expected_ttl) => {
   return t.setSeconds(t.getSeconds() + expected_ttl)
 }
 
-//https://stackoverflow.com/questions/53369407/include-tobecloseto-in-jest-tomatchobject
+// add custom matchers
+const extended_tests = require('../../test_helpers/extendExpects')
 expect.extend({
-  toBeAround(actual, expected, precision = 2) {
-    const pass = Math.abs(expected - actual) < Math.pow(10, -precision) / 2
-    if (pass) {
-      return {
-        message: () => `expected ${actual} not to be around ${expected}`,
-        pass: true
-      }
-    } else {
-      return {
-        message: () => `expected ${actual} to be around ${expected}`,
-        pass: false
-      }
-    }
-  }
+  ...extended_tests
 })
-expect.extend({
-  toBeWithinNOf(actual, expected, n) {
-    const pass = Math.abs(actual - expected) <= n
-    if (pass) {
-      return {
-        message: () => `expected ${actual} not to be within ${n} of ${expected}`,
-        pass: true
-      }
-    } else {
-      return {
-        message: () => `expected ${actual} to be within ${n} of ${expected}`,
-        pass: false
-      }
-    }
-  }
-})
-
 
 function test_first_and_actual_response(first_response, actual_response, expected_response) {
   expect(first_response['data']).toMatchObject(expected_response['data'])

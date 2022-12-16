@@ -44,6 +44,13 @@ const mockquery = (url, params) => {
     }
     return originalModule.query(url, params)
 
+  case 'line/mode/tube,overground,dlr/status':
+    if (check_params(params, { detail: true })) {
+      axios.get.mockResolvedValue(responses.get_line_mode_tube_overground_dlr_status_detail_true_disrupted)
+    } else {
+      axios.get.mockResolvedValue(responses.get_line_mode_tube_overground_status_detail_false_disrupted)
+    }
+    return originalModule.query(url, params)
   case 'line/mode/tube/route':
     axios.get.mockResolvedValue(responses.get_line_mode_tube_route)
     return originalModule.query(url, params)

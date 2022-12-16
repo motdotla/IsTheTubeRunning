@@ -1,0 +1,674 @@
+{
+  "headers": {
+    "cache-control": "public, must-revalidate, max-age=30, s-maxage=60"
+  },
+  "data": [
+    {
+      "$type": "Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities",
+      "id": "bakerloo",
+      "name": "Bakerloo",
+      "modeName": "tube",
+      "disruptions": [],
+      "created": "2022-12-14T10:28:24.993Z",
+      "modified": "2022-12-14T10:28:24.993Z",
+      "lineStatuses": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities",
+          "id": 0,
+          "lineId": "bakerloo",
+          "statusSeverity": 3,
+          "statusSeverityDescription": "Part Suspended",
+          "reason": "Bakerloo Line: No service between Queen's Park and Harrow & Wealdstone due to strike action by National Rail staff. GOOD SERVICE on the rest of the line.\r\n ",
+          "created": "0001-01-01T00:00:00",
+          "validityPeriods": [
+            {
+              "$type": "Tfl.Api.Presentation.Entities.ValidityPeriod, Tfl.Api.Presentation.Entities",
+              "fromDate": "2022-12-16T05:14:50Z",
+              "toDate": "2022-12-17T02:04:39Z",
+              "isNow": true
+            }
+          ],
+          "disruption": {
+            "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+            "category": "RealTime",
+            "categoryDescription": "RealTime",
+            "description": "Bakerloo Line: No service between Queen's Park and Harrow & Wealdstone due to strike action by National Rail staff. GOOD SERVICE on the rest of the line.\r\n ",
+            "affectedRoutes": [],
+            "affectedStops": [],
+            "closureText": "partSuspended"
+          }
+        }
+      ],
+      "routeSections": [],
+      "serviceTypes": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Regular",
+          "uri": "/Line/Route?ids=Bakerloo&serviceTypes=Regular"
+        }
+      ],
+      "crowding": {
+        "$type": "Tfl.Api.Presentation.Entities.Crowding, Tfl.Api.Presentation.Entities"
+      }
+    },
+    {
+      "$type": "Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities",
+      "id": "central",
+      "name": "Central",
+      "modeName": "tube",
+      "disruptions": [],
+      "created": "2022-12-14T10:28:24.993Z",
+      "modified": "2022-12-14T10:28:24.993Z",
+      "lineStatuses": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities",
+          "id": 0,
+          "lineId": "central",
+          "statusSeverity": 9,
+          "statusSeverityDescription": "Minor Delays",
+          "reason": "Central Line: Minor delays between White City and Ealing Broadway / West Ruislip and between Leytonstone and Epping / Woodford via Hainault due to train cancellations. GOOD SERVICE on the rest of the line. ",
+          "created": "0001-01-01T00:00:00",
+          "validityPeriods": [
+            {
+              "$type": "Tfl.Api.Presentation.Entities.ValidityPeriod, Tfl.Api.Presentation.Entities",
+              "fromDate": "2022-12-16T17:02:44Z",
+              "toDate": "2022-12-17T01:29:00Z",
+              "isNow": true
+            }
+          ],
+          "disruption": {
+            "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+            "category": "RealTime",
+            "categoryDescription": "RealTime",
+            "description": "Central Line: Minor delays between White City and Ealing Broadway / West Ruislip and between Leytonstone and Epping / Woodford via Hainault due to train cancellations. GOOD SERVICE on the rest of the line. ",
+            "affectedRoutes": [],
+            "affectedStops": [],
+            "closureText": "minorDelays"
+          }
+        }
+      ],
+      "routeSections": [],
+      "serviceTypes": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Regular",
+          "uri": "/Line/Route?ids=Central&serviceTypes=Regular"
+        },
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Night",
+          "uri": "/Line/Route?ids=Central&serviceTypes=Night"
+        }
+      ],
+      "crowding": {
+        "$type": "Tfl.Api.Presentation.Entities.Crowding, Tfl.Api.Presentation.Entities"
+      }
+    },
+    {
+      "$type": "Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities",
+      "id": "circle",
+      "name": "Circle",
+      "modeName": "tube",
+      "disruptions": [],
+      "created": "2022-12-14T10:28:24.993Z",
+      "modified": "2022-12-14T10:28:24.993Z",
+      "lineStatuses": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities",
+          "id": 0,
+          "lineId": "circle",
+          "statusSeverity": 3,
+          "statusSeverityDescription": "Part Suspended",
+          "reason": "Circle line: No service clockwise due to a signal failure at Gloucester Road. Valid tickets are being accepted on London Buses. Good service on the rest of the line.",
+          "created": "0001-01-01T00:00:00",
+          "validityPeriods": [
+            {
+              "$type": "Tfl.Api.Presentation.Entities.ValidityPeriod, Tfl.Api.Presentation.Entities",
+              "fromDate": "2022-12-16T08:24:00Z",
+              "toDate": "2022-12-17T01:29:00Z",
+              "isNow": true
+            }
+          ],
+          "disruption": {
+            "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+            "category": "RealTime",
+            "categoryDescription": "RealTime",
+            "description": "Circle line: No service clockwise due to a signal failure at Gloucester Road. Valid tickets are being accepted on London Buses. Good service on the rest of the line.",
+            "created": "2022-12-16T08:24:00Z",
+            "affectedRoutes": [],
+            "affectedStops": [],
+            "closureText": "partSuspended"
+          }
+        },
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities",
+          "id": 0,
+          "lineId": "circle",
+          "statusSeverity": 3,
+          "statusSeverityDescription": "Part Suspended",
+          "reason": "Circle Line: No service clockwise due to a signal failure at Gloucester Road. Valid tickets are being accepted on London Buses. GOOD SERVICE on the rest of the line. ",
+          "created": "0001-01-01T00:00:00",
+          "validityPeriods": [
+            {
+              "$type": "Tfl.Api.Presentation.Entities.ValidityPeriod, Tfl.Api.Presentation.Entities",
+              "fromDate": "2022-12-16T07:36:40Z",
+              "toDate": "2022-12-17T02:04:39Z",
+              "isNow": true
+            }
+          ],
+          "disruption": {
+            "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+            "category": "RealTime",
+            "categoryDescription": "RealTime",
+            "description": "Circle Line: No service clockwise due to a signal failure at Gloucester Road. Valid tickets are being accepted on London Buses. GOOD SERVICE on the rest of the line. ",
+            "affectedRoutes": [],
+            "affectedStops": [],
+            "closureText": "partSuspended"
+          }
+        }
+      ],
+      "routeSections": [],
+      "serviceTypes": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Regular",
+          "uri": "/Line/Route?ids=Circle&serviceTypes=Regular"
+        }
+      ],
+      "crowding": {
+        "$type": "Tfl.Api.Presentation.Entities.Crowding, Tfl.Api.Presentation.Entities"
+      }
+    },
+    {
+      "$type": "Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities",
+      "id": "district",
+      "name": "District",
+      "modeName": "tube",
+      "disruptions": [],
+      "created": "2022-12-14T10:28:25.01Z",
+      "modified": "2022-12-14T10:28:25.01Z",
+      "lineStatuses": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities",
+          "id": 0,
+          "lineId": "district",
+          "statusSeverity": 6,
+          "statusSeverityDescription": "Severe Delays",
+          "reason": "District Line: No service between Turnham Green and Richmond and between Parsons Green and Wimbledon due to strike action by Network Rail staff. SEVERE DELAYS on the rest of the line due to train cancellations. ",
+          "created": "0001-01-01T00:00:00",
+          "validityPeriods": [
+            {
+              "$type": "Tfl.Api.Presentation.Entities.ValidityPeriod, Tfl.Api.Presentation.Entities",
+              "fromDate": "2022-12-16T19:51:15Z",
+              "toDate": "2022-12-17T01:29:00Z",
+              "isNow": true
+            }
+          ],
+          "disruption": {
+            "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+            "category": "RealTime",
+            "categoryDescription": "RealTime",
+            "description": "District Line: No service between Turnham Green and Richmond and between Parsons Green and Wimbledon due to strike action by Network Rail staff. SEVERE DELAYS on the rest of the line due to train cancellations. ",
+            "affectedRoutes": [],
+            "affectedStops": [],
+            "closureText": "severeDelays"
+          }
+        },
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities",
+          "id": 0,
+          "lineId": "district",
+          "statusSeverity": 3,
+          "statusSeverityDescription": "Part Suspended",
+          "reason": "District Line: No service between Turnham Green and Richmond and between Parsons Green and Wimbledon due to strike action by Network Rail staff. SEVERE DELAYS on the rest of the line due to train cancellations. ",
+          "created": "0001-01-01T00:00:00",
+          "validityPeriods": [
+            {
+              "$type": "Tfl.Api.Presentation.Entities.ValidityPeriod, Tfl.Api.Presentation.Entities",
+              "fromDate": "2022-12-16T19:51:15Z",
+              "toDate": "2022-12-17T02:04:39Z",
+              "isNow": true
+            }
+          ],
+          "disruption": {
+            "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+            "category": "RealTime",
+            "categoryDescription": "RealTime",
+            "description": "District Line: No service between Turnham Green and Richmond and between Parsons Green and Wimbledon due to strike action by Network Rail staff. SEVERE DELAYS on the rest of the line due to train cancellations. ",
+            "affectedRoutes": [],
+            "affectedStops": [],
+            "closureText": "partSuspended"
+          }
+        }
+      ],
+      "routeSections": [],
+      "serviceTypes": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Regular",
+          "uri": "/Line/Route?ids=District&serviceTypes=Regular"
+        }
+      ],
+      "crowding": {
+        "$type": "Tfl.Api.Presentation.Entities.Crowding, Tfl.Api.Presentation.Entities"
+      }
+    },
+    {
+      "$type": "Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities",
+      "id": "dlr",
+      "name": "DLR",
+      "modeName": "dlr",
+      "disruptions": [],
+      "created": "2022-12-14T10:28:24.993Z",
+      "modified": "2022-12-14T10:28:24.993Z",
+      "lineStatuses": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities",
+          "id": 0,
+          "statusSeverity": 10,
+          "statusSeverityDescription": "Good Service",
+          "created": "0001-01-01T00:00:00",
+          "validityPeriods": []
+        }
+      ],
+      "routeSections": [],
+      "serviceTypes": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Regular",
+          "uri": "/Line/Route?ids=DLR&serviceTypes=Regular"
+        }
+      ],
+      "crowding": {
+        "$type": "Tfl.Api.Presentation.Entities.Crowding, Tfl.Api.Presentation.Entities"
+      }
+    },
+    {
+      "$type": "Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities",
+      "id": "hammersmith-city",
+      "name": "Hammersmith & City",
+      "modeName": "tube",
+      "disruptions": [],
+      "created": "2022-12-14T10:28:24.993Z",
+      "modified": "2022-12-14T10:28:24.993Z",
+      "lineStatuses": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities",
+          "id": 0,
+          "statusSeverity": 10,
+          "statusSeverityDescription": "Good Service",
+          "created": "0001-01-01T00:00:00",
+          "validityPeriods": []
+        }
+      ],
+      "routeSections": [],
+      "serviceTypes": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Regular",
+          "uri": "/Line/Route?ids=Hammersmith & City&serviceTypes=Regular"
+        }
+      ],
+      "crowding": {
+        "$type": "Tfl.Api.Presentation.Entities.Crowding, Tfl.Api.Presentation.Entities"
+      }
+    },
+    {
+      "$type": "Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities",
+      "id": "jubilee",
+      "name": "Jubilee",
+      "modeName": "tube",
+      "disruptions": [],
+      "created": "2022-12-14T10:28:24.993Z",
+      "modified": "2022-12-14T10:28:24.993Z",
+      "lineStatuses": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities",
+          "id": 0,
+          "statusSeverity": 10,
+          "statusSeverityDescription": "Good Service",
+          "created": "0001-01-01T00:00:00",
+          "validityPeriods": []
+        }
+      ],
+      "routeSections": [],
+      "serviceTypes": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Regular",
+          "uri": "/Line/Route?ids=Jubilee&serviceTypes=Regular"
+        },
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Night",
+          "uri": "/Line/Route?ids=Jubilee&serviceTypes=Night"
+        }
+      ],
+      "crowding": {
+        "$type": "Tfl.Api.Presentation.Entities.Crowding, Tfl.Api.Presentation.Entities"
+      }
+    },
+    {
+      "$type": "Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities",
+      "id": "london-overground",
+      "name": "London Overground",
+      "modeName": "overground",
+      "disruptions": [],
+      "created": "2022-12-14T10:28:24.993Z",
+      "modified": "2022-12-14T10:28:24.993Z",
+      "lineStatuses": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities",
+          "id": 0,
+          "lineId": "london-overground",
+          "statusSeverity": 20,
+          "statusSeverityDescription": "Service Closed",
+          "reason": "London Overground: No service due to strike action by Network Rail staff. ",
+          "created": "0001-01-01T00:00:00",
+          "validityPeriods": [
+            {
+              "$type": "Tfl.Api.Presentation.Entities.ValidityPeriod, Tfl.Api.Presentation.Entities",
+              "fromDate": "2022-12-16T18:43:58Z",
+              "toDate": "2022-12-17T02:04:39Z",
+              "isNow": true
+            },
+            {
+              "$type": "Tfl.Api.Presentation.Entities.ValidityPeriod, Tfl.Api.Presentation.Entities",
+              "fromDate": "2022-12-16T18:44:19Z",
+              "toDate": "2022-12-17T02:04:39Z",
+              "isNow": true
+            },
+            {
+              "$type": "Tfl.Api.Presentation.Entities.ValidityPeriod, Tfl.Api.Presentation.Entities",
+              "fromDate": "2022-12-16T18:44:07Z",
+              "toDate": "2022-12-17T02:04:39Z",
+              "isNow": true
+            }
+          ],
+          "disruption": {
+            "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+            "category": "RealTime",
+            "categoryDescription": "RealTime",
+            "description": "London Overground: No service due to strike action by Network Rail staff. ",
+            "affectedRoutes": [],
+            "affectedStops": [],
+            "closureText": "serviceClosed"
+          }
+        },
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities",
+          "id": 0,
+          "lineId": "london-overground",
+          "statusSeverity": 20,
+          "statusSeverityDescription": "Service Closed",
+          "reason": "No service due to strike action by Network Rail staff. ",
+          "created": "0001-01-01T00:00:00",
+          "validityPeriods": [
+            {
+              "$type": "Tfl.Api.Presentation.Entities.ValidityPeriod, Tfl.Api.Presentation.Entities",
+              "fromDate": "2022-12-16T18:44:25Z",
+              "toDate": "2022-12-17T02:04:39Z",
+              "isNow": true
+            },
+            {
+              "$type": "Tfl.Api.Presentation.Entities.ValidityPeriod, Tfl.Api.Presentation.Entities",
+              "fromDate": "2022-12-16T18:44:12Z",
+              "toDate": "2022-12-17T02:04:39Z",
+              "isNow": true
+            },
+            {
+              "$type": "Tfl.Api.Presentation.Entities.ValidityPeriod, Tfl.Api.Presentation.Entities",
+              "fromDate": "2022-12-16T18:44:38Z",
+              "toDate": "2022-12-17T02:04:39Z",
+              "isNow": true
+            }
+          ],
+          "disruption": {
+            "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+            "category": "RealTime",
+            "categoryDescription": "RealTime",
+            "description": "No service due to strike action by Network Rail staff. ",
+            "affectedRoutes": [],
+            "affectedStops": [],
+            "closureText": "serviceClosed"
+          }
+        }
+      ],
+      "routeSections": [],
+      "serviceTypes": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Regular",
+          "uri": "/Line/Route?ids=London Overground&serviceTypes=Regular"
+        },
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Night",
+          "uri": "/Line/Route?ids=London Overground&serviceTypes=Night"
+        }
+      ],
+      "crowding": {
+        "$type": "Tfl.Api.Presentation.Entities.Crowding, Tfl.Api.Presentation.Entities"
+      }
+    },
+    {
+      "$type": "Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities",
+      "id": "metropolitan",
+      "name": "Metropolitan",
+      "modeName": "tube",
+      "disruptions": [],
+      "created": "2022-12-14T10:28:24.993Z",
+      "modified": "2022-12-14T10:28:24.993Z",
+      "lineStatuses": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities",
+          "id": 0,
+          "statusSeverity": 10,
+          "statusSeverityDescription": "Good Service",
+          "created": "0001-01-01T00:00:00",
+          "validityPeriods": []
+        }
+      ],
+      "routeSections": [],
+      "serviceTypes": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Regular",
+          "uri": "/Line/Route?ids=Metropolitan&serviceTypes=Regular"
+        }
+      ],
+      "crowding": {
+        "$type": "Tfl.Api.Presentation.Entities.Crowding, Tfl.Api.Presentation.Entities"
+      }
+    },
+    {
+      "$type": "Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities",
+      "id": "northern",
+      "name": "Northern",
+      "modeName": "tube",
+      "disruptions": [],
+      "created": "2022-12-14T10:28:24.993Z",
+      "modified": "2022-12-14T10:28:24.993Z",
+      "lineStatuses": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities",
+          "id": 0,
+          "lineId": "northern",
+          "statusSeverity": 9,
+          "statusSeverityDescription": "Minor Delays",
+          "reason": "Northern Line: Minor delays due to train cancellations. ",
+          "created": "0001-01-01T00:00:00",
+          "validityPeriods": [
+            {
+              "$type": "Tfl.Api.Presentation.Entities.ValidityPeriod, Tfl.Api.Presentation.Entities",
+              "fromDate": "2022-12-16T16:55:51Z",
+              "toDate": "2022-12-17T01:29:00Z",
+              "isNow": true
+            }
+          ],
+          "disruption": {
+            "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+            "category": "RealTime",
+            "categoryDescription": "RealTime",
+            "description": "Northern Line: Minor delays due to train cancellations. ",
+            "affectedRoutes": [],
+            "affectedStops": [],
+            "closureText": "minorDelays"
+          }
+        }
+      ],
+      "routeSections": [],
+      "serviceTypes": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Regular",
+          "uri": "/Line/Route?ids=Northern&serviceTypes=Regular"
+        },
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Night",
+          "uri": "/Line/Route?ids=Northern&serviceTypes=Night"
+        }
+      ],
+      "crowding": {
+        "$type": "Tfl.Api.Presentation.Entities.Crowding, Tfl.Api.Presentation.Entities"
+      }
+    },
+    {
+      "$type": "Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities",
+      "id": "piccadilly",
+      "name": "Piccadilly",
+      "modeName": "tube",
+      "disruptions": [],
+      "created": "2022-12-14T10:28:25.01Z",
+      "modified": "2022-12-14T10:28:25.01Z",
+      "lineStatuses": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities",
+          "id": 0,
+          "statusSeverity": 10,
+          "statusSeverityDescription": "Good Service",
+          "created": "0001-01-01T00:00:00",
+          "validityPeriods": []
+        }
+      ],
+      "routeSections": [],
+      "serviceTypes": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Regular",
+          "uri": "/Line/Route?ids=Piccadilly&serviceTypes=Regular"
+        },
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Night",
+          "uri": "/Line/Route?ids=Piccadilly&serviceTypes=Night"
+        }
+      ],
+      "crowding": {
+        "$type": "Tfl.Api.Presentation.Entities.Crowding, Tfl.Api.Presentation.Entities"
+      }
+    },
+    {
+      "$type": "Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities",
+      "id": "victoria",
+      "name": "Victoria",
+      "modeName": "tube",
+      "disruptions": [],
+      "created": "2022-12-14T10:28:24.993Z",
+      "modified": "2022-12-14T10:28:24.993Z",
+      "lineStatuses": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities",
+          "id": 0,
+          "lineId": "victoria",
+          "statusSeverity": 9,
+          "statusSeverityDescription": "Minor Delays",
+          "reason": "Victoria Line: Minor delays due to train cancellations. ",
+          "created": "0001-01-01T00:00:00",
+          "validityPeriods": [
+            {
+              "$type": "Tfl.Api.Presentation.Entities.ValidityPeriod, Tfl.Api.Presentation.Entities",
+              "fromDate": "2022-12-16T12:07:09Z",
+              "toDate": "2022-12-17T01:29:00Z",
+              "isNow": true
+            }
+          ],
+          "disruption": {
+            "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+            "category": "RealTime",
+            "categoryDescription": "RealTime",
+            "description": "Victoria Line: Minor delays due to train cancellations. ",
+            "affectedRoutes": [],
+            "affectedStops": [],
+            "closureText": "minorDelays"
+          }
+        }
+      ],
+      "routeSections": [],
+      "serviceTypes": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Regular",
+          "uri": "/Line/Route?ids=Victoria&serviceTypes=Regular"
+        },
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Night",
+          "uri": "/Line/Route?ids=Victoria&serviceTypes=Night"
+        }
+      ],
+      "crowding": {
+        "$type": "Tfl.Api.Presentation.Entities.Crowding, Tfl.Api.Presentation.Entities"
+      }
+    },
+    {
+      "$type": "Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities",
+      "id": "waterloo-city",
+      "name": "Waterloo & City",
+      "modeName": "tube",
+      "disruptions": [],
+      "created": "2022-12-14T10:28:25.01Z",
+      "modified": "2022-12-14T10:28:25.01Z",
+      "lineStatuses": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities",
+          "id": 0,
+          "lineId": "waterloo-city",
+          "statusSeverity": 6,
+          "statusSeverityDescription": "Severe Delays",
+          "reason": "Waterloo and City Line: Severe delays due to faulty trains. ",
+          "created": "0001-01-01T00:00:00",
+          "validityPeriods": [
+            {
+              "$type": "Tfl.Api.Presentation.Entities.ValidityPeriod, Tfl.Api.Presentation.Entities",
+              "fromDate": "2022-12-16T20:27:50Z",
+              "toDate": "2022-12-17T01:29:00Z",
+              "isNow": true
+            }
+          ],
+          "disruption": {
+            "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+            "category": "RealTime",
+            "categoryDescription": "RealTime",
+            "description": "Waterloo and City Line: Severe delays due to faulty trains. ",
+            "affectedRoutes": [],
+            "affectedStops": [],
+            "closureText": "severeDelays"
+          }
+        }
+      ],
+      "routeSections": [],
+      "serviceTypes": [
+        {
+          "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+          "name": "Regular",
+          "uri": "/Line/Route?ids=Waterloo & City&serviceTypes=Regular"
+        }
+      ],
+      "crowding": {
+        "$type": "Tfl.Api.Presentation.Entities.Crowding, Tfl.Api.Presentation.Entities"
+      }
+    }
+  ]
+}
