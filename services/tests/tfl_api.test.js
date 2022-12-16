@@ -11,7 +11,7 @@ const calculate_remaining_time = (expected_ttl) => {
 }
 
 // add custom matchers
-const extended_tests = require('../../tests/extendExpects')
+const extended_tests = require('../../test_helpers/extendExpects')
 expect.extend({
   ...extended_tests
 })

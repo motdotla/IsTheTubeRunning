@@ -6,7 +6,7 @@ const fs = require('fs')
 
 const expected_results = require('./line.expected')
 
-const extended_tests = require('../../tests/extendExpects')
+const extended_tests = require('../../test_helpers/extendExpects')
 
 expect.extend({
   ...extended_tests
