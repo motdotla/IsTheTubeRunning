@@ -239,7 +239,9 @@ async function get_lines_for_mode(modes = ['tube', 'dlr', 'overground']) {
    * @returns {Array} - array of lines including the name and ID of the originating and terminating stations
    *
    */
-
+  if (!Array.isArray(modes)) {
+      throw new Error('modes must be an array')
+    }
 
   const cache_key = `all_lines-${modes}`
   const cached_value = query_cache.get(cache_key)

@@ -46,3 +46,26 @@ describe('line controller gets stoppoints', () => {
     test_actual_response(actual_response, expected_response)
   })
 })
+describe('get the valid lines for a given mode', () => {
+
+  test('gets lines for tube', async () => {
+    const expected_response = expected_results.lines_for_mode_tube
+    const actual_response = await line.lines_for_mode(['tube'])
+    expect(actual_response).toMatchObject(expected_response)
+  })
+  test('gets lines for overground', async () => {
+    const expected_response = expected_results.lines_for_mode_overground
+    const actual_response = await line.lines_for_mode(['tube'])
+    expect(actual_response.data).toMatchObject(expected_response.data)
+    expect(actual_response.ttl).toBeLessThanOrEqual(expected_response.ttl)
+  })
+
+  test('gets lines for tube,overground', async () => {
+    const expected_response = expected_results.lines_for_mode_tube_overground
+    const actual_response = await line.lines_for_mode(['tube','overground'])
+    expect(actual_response).toMatchObject(expected_response)
+  })
+  test('throws error if mode is not an array', async () => {
+    await expect(line.lines_for_mode('tube')).rejects.toThrow('modes must be an array')
+  })
+})
