@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "start": "func start",
-    "test": "NODE_ENV=test --inspect-brk jest --verbose --runInBand --coverage",
+    "test": "NODE_ENV=test --inspect-brk jest --verbose --runInBand --coverage --detectOpenHandles",
     "test:ci": "jest --ci --reporters='default' --reporters='jest-junit'"
   },
   "dependencies": {

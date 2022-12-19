@@ -36,7 +36,31 @@ describe('GraphDB tests', () => {
     })
 
     test('can connect to stoppoint_collection', async () => {
-      expect(graph.__get__('stoppoint_client')).toBeDefined()
+      const stoppoint_client =  graph.__get__('stoppoint_client')
+      expect(stoppoint_client).toBeDefined()
+      const actual_result = await stoppoint_client.submit('g.V().count()')
+      expect(actual_result['length']).toBeDefined()
     })
   })
-})
+  // TODO: create second user to access graphdb
+  describe('test graphdb queries', () => {
+    describe('test add_stoppoint with upsert', () => {
+      test('add a single stoppoint', async () => {
+        const stoppoint = {
+          type: 'stoppoint',
+          id: 'test',
+          name: 'test',
+          natplanId: 'test',
+          lat: 0,
+          lon: 0,
+          modes: ['test'],
+          lines: ['test'] }
+        const expected_result = 'test'
+        const actual_result = await graph.add_stoppoint(stoppoint, true)
+        expect(actual_result).toBe(expected_result)
+      })
+
+    })
+
+
+  })})
