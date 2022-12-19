@@ -3,12 +3,12 @@ const config = require('../utils/config')
 const logger = require('../utils/logger')
 const helpers = require('../utils/helpers')
 
-const authenticator = new Gremlin.driver.auth.PlainTextSaslAuthenticator(`/dbs/${config.graph_database}/colls/${config.graph_stoppoint_colleciton}`, config.graph_primary_key)
+const stoppoint_authenticator = new Gremlin.driver.auth.PlainTextSaslAuthenticator(`/dbs/${config.graph_database}/colls/${config.graph_stoppoint_colleciton}`, config.graph_primary_key)
 
-const client = new Gremlin.driver.Client(
+const stoppoint_client = new Gremlin.driver.Client(
   config.graph_endpoint,
   {
-    authenticator,
+    authenticator: stoppoint_authenticator,
     traversalsource: 'g',
     rejectUnauthorized: true,
     mimeType: 'application/vnd.gremlin-v2.0+json'
@@ -57,7 +57,7 @@ const add_stoppoint = async (stoppoint, upsert = false) => {
   //return await client.submit(query)
   // TODO - fix retry logic
   logger.debug('writing one StopPoint to graphdb')
-  return helpers.retry(function(){  client.submit(query) }, 5,2 )
+  return helpers.retry(function(){  stoppoint_client.submit(query) }, 5,2 )
 
 }
 
@@ -84,7 +84,7 @@ const add_line = async (line_edge, upsert = false) => {
   // submit the query to the graphdb
   //logger.debug(query.replace(/\n/g, ''))
 
-  return helpers.retry(function(){ client.submit(query)}, 5,2 )
+  return helpers.retry(function(){ stoppoint_client.submit(query)}, 5,2 )
 
 }
 
