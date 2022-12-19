@@ -47,13 +47,16 @@ describe('GraphDB tests', () => {
   })
   // TODO: create second user to access graphdb
   describe('test graphdb queries', () => {
+    let list_of_added_stoppoints = []
     afterAll(async () => {
+      //TODO: move this to independent code i.e. not dependent on graphdb.js
       const client = graph.__get__('stoppoint_client')
       await client.close()
     })
     describe('test add_stoppoint with upsert', () => {
       test('add a single stoppoint', async () => {
         const new_stoppoint = generate_random_stoppoint(2,3)
+        list_of_added_stoppoints.push(new_stoppoint['id'])
         const actual_result = await graph.add_stoppoint(new_stoppoint, true)
         expect(actual_result['success']).toBe(true)
         expect(actual_result['data']).toHaveLength(1)

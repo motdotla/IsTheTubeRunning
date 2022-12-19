@@ -24,6 +24,19 @@ function escape_string(str) {
   return str.replace(/'/g, '\\\'')
 }
 
+const add_array_value = (arr, property_name) => {
+  /**
+   * Converts an array to a string containing the same property
+   * with each different value ('multi-properties')
+   * see https://tinkerpop.apache.org/docs/current/reference/#vertex-properties
+   * @param {Array} arr - array to convert
+   * @returns {String} - list of .property entries
+   */
+  const items = arr.map((item) => `.property('${property_name}', '${escape_string(item)}')`).join('\n')
+
+  return items
+}
+
 const add_stoppoint = async (stoppoint, upsert = false) => {
   /**
    * Adds a stoppoint to the graphdb.
@@ -35,11 +48,7 @@ const add_stoppoint = async (stoppoint, upsert = false) => {
    */
 
 
-  const add_array_value = (arr) =>{
-    TODO s
-    const items = SON.stringify(arr).replaceAll('"','\'')
-    return J
-}
+
   // construct a query to add the stoppoint to the graphdb
   const add_query = `addV('${stoppoint['type']}')
   .property('id', '${stoppoint['id']}')
@@ -47,8 +56,8 @@ const add_stoppoint = async (stoppoint, upsert = false) => {
   .property('naptanId', '${stoppoint['naptanId']}')
   .property('lat', '${stoppoint['lat']}')
   .property('lon', '${stoppoint['lon']}')
-  .property('modes', ${add_array_value(stoppoint['modes'])})
-  .property('modes', ${add_array_value(stoppoint['lines'])})`
+  ${add_array_value(stoppoint['modes'], 'modes')}
+  ${add_array_value(stoppoint['lines'], 'lines')}`
 
   // if upsert is true, then we want to wrap the add_query in an upsert
   const with_upsert = `V('${stoppoint.id}')
@@ -62,11 +71,7 @@ const add_stoppoint = async (stoppoint, upsert = false) => {
   const query = `g.${upsert ? with_upsert : add_query}`
   // log the query, removing the newlines
   // logger.debug(query.replace(/\n/g, ''))
-  // submit the query to the graphdb
-  //return await client.submit(query)
-  // TODO - fix retry logic
-  //logger.debug('writing one StopPoint to graphdb')
-  //return helpers.retry(function(){  stoppoint_client.submit(query) }, 5,2 )
+ 
   const result = await execute_query(stoppoint_client, query, 5)
 
   return result
@@ -113,17 +118,17 @@ const execute_query = async (client, query, maxAttempts) => {
 
   let retry_time = 1000
   const execute = async (attempt) => {
-    if (attempt > 1) {logger.debug(`attempt ${attempt} of ${maxAttempts}`)}
+    if (attempt > 1) { logger.debug(`attempt ${attempt} of ${maxAttempts}`) }
     try {
       const client_result = await client.submit(query)
-      if (Object.hasOwnProperty.call(client_result.attributes, 'x-ms-retry-after-ms') ) {
+      if (Object.hasOwnProperty.call(client_result.attributes, 'x-ms-retry-after-ms')) {
         retry_time = client_result.attributes['x-ms-retry-after-ms']
         throw new Error(`received x-ms-retry-after-ms - retrying after ${retry_time} ms`)
       }
       const seralised_result = serializeGremlinResults(client_result['_items'])
       return { data: seralised_result, success: true }
     } catch (err) {
-      const ms_status_code = err['statusAttributes'] ?  err['statusAttributes']['x-ms-status-code'] : null
+      const ms_status_code = err['statusAttributes'] ? err['statusAttributes']['x-ms-status-code'] : null
       if (ms_status_code === 409) {
         // conflict - we need to abort
         return { success: false, error: err['statusMessage'] }
