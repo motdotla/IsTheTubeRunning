@@ -16,6 +16,10 @@ const stoppoint_client = new Gremlin.driver.Client(
   }
 )
 
+
+// create Gremlin traversal
+
+
 function escape_string(str) {
   return str.replace(/'/g, '\\\'')
 }
@@ -30,6 +34,12 @@ const add_stoppoint = async (stoppoint, upsert = false) => {
    * @returns {Promise} - pending query to graphdb
    */
 
+
+  const add_array_value = (arr) =>{
+    TODO s
+    const items = SON.stringify(arr).replaceAll('"','\'')
+    return J
+}
   // construct a query to add the stoppoint to the graphdb
   const add_query = `addV('${stoppoint['type']}')
   .property('id', '${stoppoint['id']}')
@@ -37,8 +47,8 @@ const add_stoppoint = async (stoppoint, upsert = false) => {
   .property('naptanId', '${stoppoint['naptanId']}')
   .property('lat', '${stoppoint['lat']}')
   .property('lon', '${stoppoint['lon']}')
-  .property('modes', '${stoppoint['modes']}')
-  .property('lines', '${stoppoint['lines']}')`
+  .property('modes', ${add_array_value(stoppoint['modes'])})
+  .property('modes', ${add_array_value(stoppoint['lines'])})`
 
   // if upsert is true, then we want to wrap the add_query in an upsert
   const with_upsert = `V('${stoppoint.id}')
@@ -55,11 +65,11 @@ const add_stoppoint = async (stoppoint, upsert = false) => {
   // submit the query to the graphdb
   //return await client.submit(query)
   // TODO - fix retry logic
-  logger.debug('writing one StopPoint to graphdb')
+  //logger.debug('writing one StopPoint to graphdb')
   //return helpers.retry(function(){  stoppoint_client.submit(query) }, 5,2 )
-  const result = await execute_query(query, 5)
+  const result = await execute_query(stoppoint_client, query, 5)
 
-  return result['_items']
+  return result
 }
 
 
@@ -89,39 +99,74 @@ const add_line = async (line_edge, upsert = false) => {
 
 }
 
-const execute_query = async (query, maxAttempts) => {
+const execute_query = async (client, query, maxAttempts) => {
   /**
    * Retry a function up to a maximum number of attempts
    * adapted from https://solutional.ee/blog/2020-11-19-Proper-Retry-in-JavaScript.html
-   * 
+   *
    * @param {String} query - query to execute
    * @param {Number} maxAttempts - maximum number of attempts to execute the query
-   * 
+   *
    * @returns {String} - result of the query
    */
+
+
   let retry_time = 1000
   const execute = async (attempt) => {
-    logger.debug(`attempt ${attempt} of ${maxAttempts}`)
+    if (attempt > 1) {logger.debug(`attempt ${attempt} of ${maxAttempts}`)}
     try {
-      const result = await stoppoint_client.submit(query)
-      if (Object.hasOwnProperty.call(result.attributes, 'x-ms-retry-after-ms') ) {
-        retry_time = result.attributes['x-ms-retry-after-ms']
+      const client_result = await client.submit(query)
+      if (Object.hasOwnProperty.call(client_result.attributes, 'x-ms-retry-after-ms') ) {
+        retry_time = client_result.attributes['x-ms-retry-after-ms']
         throw new Error(`received x-ms-retry-after-ms - retrying after ${retry_time} ms`)
       }
-      return result
+      const seralised_result = serializeGremlinResults(client_result['_items'])
+      return { data: seralised_result, success: true }
     } catch (err) {
-      if (attempt <= maxAttempts) {
+      const ms_status_code = err['statusAttributes'] ?  err['statusAttributes']['x-ms-status-code'] : null
+      if (ms_status_code === 409) {
+        // conflict - we need to abort
+        return { success: false, error: err['statusMessage'] }
+      } else if (attempt <= maxAttempts) {
         const nextAttempt = attempt + 1
         const delayInMs = retry_time ? retry_time : Math.max(Math.min(Math.pow(2, nextAttempt) + randInt(-nextAttempt, nextAttempt), 5), 1)
-        console.error(`Retrying after ${delayInMs} seconds due to:`, err)
+        logger.error(`Retrying after ${delayInMs} ms due to:`, err)
         return delay(() => execute(nextAttempt), delayInMs)
       } else {
-        throw err
+        return { success: false, error: err['statusMessage'] }
       }
     }
   }
-  return execute(1)
+  const final_result = await execute(1)
+  return final_result
 }
+
+function serializeGremlinResults(results) {
+  let serializedResults = []
+  results.forEach(result => {
+    serializedResults.push({
+      id: result.id,
+      label: result.label,
+      type: result.type,
+      properties: serializeProperties(result.properties)
+    })
+  })
+  return serializedResults
+}
+
+function serializeProperties(properties) {
+  let serializedProperties = {}
+  Object.keys(properties).forEach(key => {
+    const value = properties[key]
+    if (value.length > 1) {
+      serializedProperties[key] = value.map(item => item.value)
+    } else {
+      serializedProperties[key] = value[0].value
+    }
+  })
+  return serializedProperties
+}
+
 
 const delay = (fn, ms) => new Promise((resolve) => setTimeout(() => resolve(fn()), ms))
 
