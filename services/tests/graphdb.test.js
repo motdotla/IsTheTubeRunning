@@ -105,6 +105,7 @@ describe('GraphDB tests', () => {
         await client.close()
       })
       test('add a single stoppoint', async () => {
+        jest.setTimeout(20000)
         const new_stoppoint = generate_random_stoppoint(2, 3)
         list_of_added_stoppoints.push(new_stoppoint['id'])
         const actual_result = await graph.add_stoppoint(new_stoppoint, true)

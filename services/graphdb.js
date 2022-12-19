@@ -68,7 +68,7 @@ const add_stoppoint = async (stoppoint, upsert = false) => {
   // log the query, removing the newlines
   // logger.debug(query.replace(/\n/g, ''))
 
-  const result = await execute_query(stoppoint_client, query, 5)
+  const result = await execute_query(stoppoint_client, query, 3)
   return result
 }
 
@@ -109,7 +109,7 @@ const execute_query = async (client, query, maxAttempts) => {
    */
 
 
-  let retry_time = 1000
+  let retry_time = 200
   const execute = async (attempt) => {
     if (attempt > 1) { logger.debug(`attempt ${attempt} of ${maxAttempts}`) }
     try {
