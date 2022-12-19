@@ -18,6 +18,10 @@ const stoppoint_client = new Gremlin.driver.Client(
   }
 )
 
+async () => {const haveOpened = await stoppoint_client.open()
+  logger.info('opened graphdb client: ', haveOpened)}
+
+
 function escape_string(str) {
   return str.replace(/'/g, '\\\'')
 }
@@ -124,7 +128,7 @@ const execute_query = async (client, query, maxAttempts) => {
       const ms_retry_after = err['statusAttributes'] ? err['statusAttributes']['x-ms-retry-after-ms'] : null
       // we need to retry after ms_retry_after ms
       if (ms_retry_after) { retry_time = stringToMilliseconds(ms_retry_after) }
-      if ([429, 408, 449].includes(ms_status_code) && attempt <= maxAttempts -1) {
+      if ([429, 408, 449].includes(ms_status_code) && attempt <= maxAttempts - 1) {
         // other, recoverable codes which we can retry
         // https://learn.microsoft.com/en-us/rest/api/cosmos-db/http-status-codes-for-cosmosdb
         // 429, 408, 449
@@ -175,7 +179,7 @@ function stringToMilliseconds(timeString) {
    * @returns {Number} - time in milliseconds
    */
   const [hours, minutes, seconds] = timeString.split(':');
-  const milliseconds = Math.round(parseFloat(`0.${seconds.split('.')[1]}`)*1000)
+  const milliseconds = Math.round(parseFloat(`0.${seconds.split('.')[1]}`) * 1000)
   return (hours * 3600 + minutes * 60 + parseInt(seconds, 10)) * 1000 + milliseconds;
 }
 

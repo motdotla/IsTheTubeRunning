@@ -5,6 +5,8 @@ const fs = require('fs')
 const randomString = () => Math.random().toString(36).slice(2, 7)
 
 describe('GraphDB tests', () => {
+
+
   describe('test helper functions', () => {
     describe('test escape_string', () => {
       const escape_string = graph.__get__('escape_string')
@@ -82,19 +84,24 @@ describe('GraphDB tests', () => {
       expect(graph.__get__('stoppoint_authenticator')).toBeDefined()
     })
 
-    test('can connect to stoppoint_collection', async () => {
-      const stoppoint_client = graph.__get__('stoppoint_client')
-      expect(stoppoint_client).toBeDefined()
-      const actual_result = await stoppoint_client.submit('g.V().count()')
-      expect(actual_result['length']).toBeDefined()
-      stoppoint_client.close()
-    })
+
   })
   // TODO: create second user to access graphdb
   describe('test graphdb queries', () => {
+    afterAll(async () => {
+      console.info('closing stoppoint_client')
+      const stoppoint_client = graph.__get__('stoppoint_client')
+      await stoppoint_client.close()
+    })
 
     describe('tests with actual DB queries', () => {
       let list_of_added_stoppoints = []
+      test('can connect to stoppoint_collection', async () => {
+        const stoppoint_client = graph.__get__('stoppoint_client')
+        expect(stoppoint_client).toBeDefined()
+        const actual_result = await stoppoint_client.submit('g.V().count()')
+        expect(actual_result['length']).toBeDefined()
+      })
       afterAll(async () => {
         //TODO: move this to independent code i.e. not dependent on graphdb.js
         const client = graph.__get__('stoppoint_client')
@@ -102,7 +109,6 @@ describe('GraphDB tests', () => {
         const delete_promises = await Promise.all(list_of_added_stoppoints.map(stoppoint_id => execute_query(client, `g.V('${stoppoint_id}').drop()`, 3)))
         const delete_results = delete_promises.every(result => result['success'] === true)
         console.log(`deleted ${list_of_added_stoppoints.length} stoppoints: ${delete_results}`)
-        await client.close()
       })
       test('add a single stoppoint', async () => {
         jest.setTimeout(20000)
