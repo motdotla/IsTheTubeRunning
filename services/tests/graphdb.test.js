@@ -40,10 +40,14 @@ describe('GraphDB tests', () => {
       expect(stoppoint_client).toBeDefined()
       const actual_result = await stoppoint_client.submit('g.V().count()')
       expect(actual_result['length']).toBeDefined()
+      stoppoint_client.close()
     })
   })
   // TODO: create second user to access graphdb
   describe('test graphdb queries', () => {
+    afterAll(() => {
+      graph.__get__('stoppoint_client').close()
+    })
     describe('test add_stoppoint with upsert', () => {
       test('add a single stoppoint', async () => {
         const stoppoint = {

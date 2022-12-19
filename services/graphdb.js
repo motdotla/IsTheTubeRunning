@@ -57,8 +57,9 @@ const add_stoppoint = async (stoppoint, upsert = false) => {
   // TODO - fix retry logic
   logger.debug('writing one StopPoint to graphdb')
   //return helpers.retry(function(){  stoppoint_client.submit(query) }, 5,2 )
-  return execute_query(query, 5)
+  const result = await execute_query(query, 5)
 
+  return result['_items']
 }
 
 
@@ -83,8 +84,8 @@ const add_line = async (line_edge, upsert = false) => {
       .property('direction', '${line_edge['direction']}'))`
   // submit the query to the graphdb
   //logger.debug(query.replace(/\n/g, ''))
-
-  return helpers.retry(function(){ stoppoint_client.submit(query)}, 5,2 )
+  const result = await execute_query(query, 5)
+  return result
 
 }
 
@@ -100,12 +101,14 @@ const execute_query = async (query, maxAttempts) => {
    */
   let retry_time = 1000
   const execute = async (attempt) => {
+    logger.debug(`attempt ${attempt} of ${maxAttempts}`)
     try {
       const result = await stoppoint_client.submit(query)
       if (Object.hasOwnProperty.call(result.attributes, 'x-ms-retry-after-ms') ) {
         retry_time = result.attributes['x-ms-retry-after-ms']
         throw new Error(`received x-ms-retry-after-ms - retrying after ${retry_time} ms`)
       }
+      return result
     } catch (err) {
       if (attempt <= maxAttempts) {
         const nextAttempt = attempt + 1
