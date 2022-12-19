@@ -72,7 +72,7 @@ describe('GraphDB tests', () => {
   // TODO: create second user to access graphdb
   describe('test graphdb queries', () => {
 
-    describe('test add_stoppoint with upsert', () => {
+    describe('tests with actual DB queries', () => {
       let list_of_added_stoppoints = []
       afterAll(async () => {
         //TODO: move this to independent code i.e. not dependent on graphdb.js
