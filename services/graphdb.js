@@ -136,7 +136,8 @@ const execute_query = async (client, query, maxAttempts) => {
         // any other error
         // including non-recoverable codes
         // 400, 401, 403, 404, 409, 412, 413, 500, 503
-        return { success: false, error: err['statusMessage'], status_code: ms_status_code }
+        // if we dont have ms_status_code, then return the whole err object
+        return { success: false, error: ms_status_code ? err['statusMessage'] : err, status_code: ms_status_code }}
       }
     }
   }
