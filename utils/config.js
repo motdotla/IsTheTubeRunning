@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv-vault-core').config()
 
 const PORT = process.env.PORT || 8081
 const is_non_production = process.env.NODE_ENV !== ('prod' || 'production')
