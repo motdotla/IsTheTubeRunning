@@ -1,5 +1,5 @@
-const Gremlin = require('gremlin')
 const config = require('../utils/config')
+const Gremlin = require('gremlin')
 const logger = require('../utils/logger')
 const helpers = require('../utils/helpers')
 
