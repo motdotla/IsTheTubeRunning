@@ -109,7 +109,7 @@ describe('GraphDB tests', () => {
         list_of_added_stoppoints.push(new_stoppoint['id'])
         const actual_result = await graph.add_stoppoint(new_stoppoint, true)
         if (!actual_result['success']) {
-          console.error('error result:' , actual_result['error'])
+          console.error('error result:' , actual_result)
         }
         expect(actual_result['success']).toBe(true)
         expect(actual_result['data']).toHaveLength(1)
