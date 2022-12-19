@@ -18,10 +18,6 @@ const stoppoint_client = new Gremlin.driver.Client(
   }
 )
 
-
-// create Gremlin traversal
-
-
 function escape_string(str) {
   return str.replace(/'/g, '\\\'')
 }
@@ -71,13 +67,10 @@ const add_stoppoint = async (stoppoint, upsert = false) => {
   const query = `g.${upsert ? with_upsert : add_query}`
   // log the query, removing the newlines
   // logger.debug(query.replace(/\n/g, ''))
- 
-  const result = await execute_query(stoppoint_client, query, 5)
 
+  const result = await execute_query(stoppoint_client, query, 5)
   return result
 }
-
-
 
 const add_line = async (line_edge, upsert = false) => {
   // add a line to the graphdb
@@ -131,14 +124,14 @@ const execute_query = async (client, query, maxAttempts) => {
       const ms_status_code = err['statusAttributes'] ? err['statusAttributes']['x-ms-status-code'] : null
       if (ms_status_code === 409) {
         // conflict - we need to abort
-        return { success: false, error: err['statusMessage'] }
+        return { success: false, error: err['statusMessage'], status_code: ms_status_code }
       } else if (attempt <= maxAttempts) {
         const nextAttempt = attempt + 1
         const delayInMs = retry_time ? retry_time : Math.max(Math.min(Math.pow(2, nextAttempt) + randInt(-nextAttempt, nextAttempt), 5), 1)
         logger.error(`Retrying after ${delayInMs} ms due to:`, err)
         return delay(() => execute(nextAttempt), delayInMs)
       } else {
-        return { success: false, error: err['statusMessage'] }
+        return { success: false, error: err['statusMessage'], status_code: ms_status_code }
       }
     }
   }
@@ -156,6 +149,7 @@ function serializeGremlinResults(results) {
    * @param {Array} results - results of a gremlin query
    * @returns {Array} - array of objects
    */
+
   let serializedResults = []
   results.forEach(result => {
     serializedResults.push({
