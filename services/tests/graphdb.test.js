@@ -101,14 +101,17 @@ describe('GraphDB tests', () => {
         const execute_query = graph.__get__('execute_query')
         const delete_promises = await Promise.all(list_of_added_stoppoints.map(stoppoint_id => execute_query(client, `g.V('${stoppoint_id}').drop()`, 3)))
         const delete_results = delete_promises.every(result => result['success'] === true)
-        expect(delete_results).toBe(true)
-        console.log(`deleted ${list_of_added_stoppoints.length} stoppoints`)
+        
+        console.log(`deleted ${list_of_added_stoppoints.length} stoppoints: ${delete_results}`)
         await client.close()
       })
       test('add a single stoppoint', async () => {
         const new_stoppoint = generate_random_stoppoint(2, 3)
         list_of_added_stoppoints.push(new_stoppoint['id'])
         const actual_result = await graph.add_stoppoint(new_stoppoint, true)
+        if (!actual_result['success']) {
+          console.log(actual_result['error'])
+        }
         expect(actual_result['success']).toBe(true)
         expect(actual_result['data']).toHaveLength(1)
         const added_stoppoint = actual_result['data'][0]
