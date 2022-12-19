@@ -1,12 +1,8 @@
 //const config = require('../utils/config')
 const logger = require('../utils/logger')
-const {query} = require('./tfl_api.query')
+const { query } = require('./tfl_api.query')
 
 const query_cache = require('../services/cache')
-
-// const axios = require('axios')
-
-
 
 const structure_cached_value = (cached_value, cache_ttl) => {
   /**
@@ -28,10 +24,6 @@ const structure_cached_value = (cached_value, cache_ttl) => {
   }
   return { data: cached_value, ttl: remaining_ttl }
 }
-
-
-
-
 
 function summarise_lineStatuses(line) {
   /**
@@ -189,12 +181,7 @@ async function get_line_stoppoints_in_order(line_id) {
     logger.debug(`${cache_key} cache miss`)
     const line_stoppoints_api_query = `Line/${line_id}/Route/Sequence/all`
     const line_stoppoints = await query(line_stoppoints_api_query, { excludeCrowding: true })
-    // extract the stoppoints from the line_stoppoints data
-    /*if (!line_stoppoints.data.stopPointSequences) {
-      logger.debug('line_stoppoints.data.stopPointSequences', line_stoppoints.data.stopPointSequences, line_stoppoints.data, line_id)
-      throw new Error('line_stoppoints.data.stopPointSequences is undefined')
 
-    }*/
     const directional_points = line_stoppoints.data.stopPointSequences.map(sp => get_directional_stoppoints(sp))
 
     query_cache.set(cache_key, directional_points, line_stoppoints.ttl)
@@ -240,8 +227,8 @@ async function get_lines_for_mode(modes = ['tube', 'dlr', 'overground']) {
    *
    */
   if (!Array.isArray(modes)) {
-      throw new Error('modes must be an array')
-    }
+    throw new Error('modes must be an array')
+  }
 
   const cache_key = `all_lines-${modes}`
   const cached_value = query_cache.get(cache_key)
