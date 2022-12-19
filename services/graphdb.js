@@ -3,6 +3,8 @@ const config = require('../utils/config')
 const logger = require('../utils/logger')
 const helpers = require('../utils/helpers')
 
+const fs = require('fs')
+
 const gremlin_db_string = `/dbs/${config.graph_database}/colls/${config.graph_stoppoint_colleciton}`
 const stoppoint_authenticator = new Gremlin.driver.auth.PlainTextSaslAuthenticator(gremlin_db_string, config.graph_primary_key)
 
@@ -46,8 +48,6 @@ const add_stoppoint = async (stoppoint, upsert = false) => {
    * @param {object} stoppoint - stoppoint object
    * @returns {Promise} - pending query to graphdb
    */
-
-
 
   // construct a query to add the stoppoint to the graphdb
   const add_query = `addV('${stoppoint['type']}')
@@ -147,13 +147,22 @@ const execute_query = async (client, query, maxAttempts) => {
 }
 
 function serializeGremlinResults(results) {
+  /**
+   * Serialise the results of a gremlin query
+   * return an array of objects.
+   * The gremlin 'properties' key is flattened into the object
+   * If a property has multiple values, then the value is an array
+   * If a property has a single value, then the value is a string
+   * @param {Array} results - results of a gremlin query
+   * @returns {Array} - array of objects
+   */
   let serializedResults = []
   results.forEach(result => {
     serializedResults.push({
       id: result.id,
       label: result.label,
       type: result.type,
-      properties: serializeProperties(result.properties)
+      ...serializeProperties(result.properties)
     })
   })
   return serializedResults
