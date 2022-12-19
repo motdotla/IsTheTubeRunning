@@ -5,7 +5,7 @@
   "scripts": {
     "start": "func start",
     "test": "NODE_ENV=test jest --verbose --runInBand --coverage --detectOpenHandles --forceExit",
-    "test:ci": "jest --ci --coverage --reporters=[ 'github-actions', 'default'] "
+    "test:ci": "jest --ci --coverage"
   },
   "dependencies": {
     "@azure/event-hubs": "^5.8.0",
