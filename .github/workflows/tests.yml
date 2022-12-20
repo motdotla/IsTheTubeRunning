@@ -6,14 +6,22 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Test using Node.js
+      - name: check out source code
+        uses: actions/checkout@v3
+      - name: set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
       - run: npm install
+        name: run npm install
+        env:
+          DOTENV_KEY: ${{ secrets.DOTENV_KEY }}        
       - run: npm run test:ci
-      - uses: IgnusG/jest-report-action@v2.3.3
+        name: execute tests
+        env:
+          DOTENV_KEY: ${{ secrets.DOTENV_KEY }}
+      - name: report junit results
+        uses: IgnusG/jest-report-action@v2.3.3
         if: always() # Or use "continue-on-error: true" in previous test step
         with:
-          access-token: ${{ secrets.GITHUB_TOKEN }}
+         access-token: ${{ secrets.GITHUB_TOKEN }}

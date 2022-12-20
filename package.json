@@ -4,13 +4,14 @@
   "description": "",
   "scripts": {
     "start": "func start",
-    "test": "NODE_ENV=test --inspect-brk jest --verbose --runInBand --coverage",
-    "test:ci": "jest --ci --reporters='default' --reporters='jest-junit'"
+    "test": "NODE_ENV=test jest --verbose --runInBand --coverage --detectOpenHandles --forceExit",
+    "test:ci": "jest --ci --coverage  --reporters=default --reporters=jest-junit --reporters=github-actions"
   },
   "dependencies": {
     "@azure/event-hubs": "^5.8.0",
     "axios": "^1.2.0",
     "dotenv": "^16.0.3",
+    "dotenv-vault-core": "^0.6.1",
     "eslint": "^8.28.0",
     "gremlin": "^3.6.1",
     "node-cache": "^5.1.2"

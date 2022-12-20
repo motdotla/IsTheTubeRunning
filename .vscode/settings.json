@@ -9,5 +9,6 @@
   "jest.showCoverageOnLoad": false,
   "jest.testExplorer": {
     "enabled": true
-  }
+  },
+  "dotenv.enableAutocloaking": false
 }

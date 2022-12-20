@@ -137,6 +137,10 @@ describe('TfL tests', () => {
         const expected_response = tfl_sdk_responses.get_lines_for_mode_tube_overground
         test_first_and_actual_response(first_response, actual_response, expected_response)
       })
+      test('calls TFL API to get lines with string not array', async () => {
+        await expect(tfl_api.get_lines_for_mode('tube,overground'))
+        .rejects.toThrowError('must be an array')
+      })
     })
   })
 
