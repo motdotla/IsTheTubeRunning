@@ -1,4 +1,4 @@
-name: Tests CI
+name: check dependencies on PRs
 
 on: [pull_request]
 
