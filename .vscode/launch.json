@@ -1,6 +1,17 @@
 {
   "version": "0.2.0",
   "configurations": [
+  {
+    // run current file
+    "name": "Debug Current File",
+    "type": "node",
+    "request": "launch",
+    "program": "${file}",
+    "console": "integratedTerminal",
+    "internalConsoleOptions": "neverOpen"
+  },
+
+  
     {
       "name": "Attach to Node Functions",
       "type": "node",

@@ -18,8 +18,10 @@ const stoppoint_client = new Gremlin.driver.Client(
   }
 )
 
-async () => {const haveOpened = await stoppoint_client.open()
-  logger.info('opened graphdb client: ', haveOpened)}
+async () => {
+  const haveOpened = await stoppoint_client.open()
+  logger.info('opened graphdb client: ', haveOpened)
+}
 
 
 function escape_string(str) {
@@ -39,7 +41,7 @@ const add_array_value = (arr, property_name) => {
   return items
 }
 
-const add_stoppoint = async (stoppoint, upsert = false) => {
+const add_stoppoint = async (stoppoint, upsert = true) => {
   /**
    * Adds a stoppoint to the graphdb.
    * a stoppoint is an object with teh following properties:
@@ -72,31 +74,44 @@ const add_stoppoint = async (stoppoint, upsert = false) => {
   // log the query, removing the newlines
   // logger.debug(query.replace(/\n/g, ''))
 
-  const result = await execute_query(stoppoint_client, query, 3)
+  const result = await execute_query(stoppoint_client, query, 5)
   return result
 }
 
-const add_line = async (line_edge, upsert = false) => {
+const add_line = async (line_edge, upsert = true) => {
   // add a line to the graphdb
   // a line is an object with the following properties:
   // id, name, modeName, modeId, routeSections
-  logger.debug(`adding line ${line_edge.id} to graphdb`)
 
+  if ((!(line_edge)) || (!(Object.prototype.hasOwnProperty.call(line_edge, 'id')))){
+    logger.error('line_edge does not have an id')
+    return
+  }
 
-  const query = `g.E('${line_edge['id']}')
-    .fold()
-    .coalesce(
-      unfold(),
-      addE('TO')
-      .from(g.V('${line_edge['from']}'))
-      .to(g.V('${line_edge['to']}'))
-      .property('id', '${line_edge['id']}')
-      .property('line', '${line_edge['lineName']}')
-      .property('branch', '${line_edge['branchId']}')
-      .property('direction', '${line_edge['direction']}'))`
+  const line_id = line_edge['id']
+
+  // logger.debug(`adding line ${line_id} to graphdb`)
+
+  const add_query = `addE('TO')
+                    .from(g.V('${line_edge['from']}'))
+                    .to(g.V('${line_edge['to']}'))
+                    .property('id', '${line_edge['id']}')
+                    .property('line', '${line_edge['lineName']}')
+                    .property('branch', '${line_edge['branchId']}')
+                    .property('direction', '${line_edge['direction']}')`
+
+  const with_upsert = `E('${line_edge['id']}')
+                      .fold()
+                      .coalesce(
+                        unfold(),
+                        ${add_query}
+                        )`
+
+  const query = `g.${upsert ? with_upsert : add_query}`
+
   // submit the query to the graphdb
   //logger.debug(query.replace(/\n/g, ''))
-  const result = await execute_query(query, 5)
+  const result = await execute_query(stoppoint_client, query, 5)
   return result
 
 }
@@ -113,7 +128,7 @@ const execute_query = async (client, query, maxAttempts) => {
    */
 
 
-  let retry_time = 200
+  let retry_time = 1000
   const execute = async (attempt) => {
     if (attempt > 1) { logger.debug(`attempt ${attempt} of ${maxAttempts}`) }
     try {
