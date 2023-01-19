@@ -86,6 +86,8 @@ async function get_lines_for_modes(modes) {
 async function get_stoppoints_and_joining_lines(tfl_lines) {
   const raw_stoppoints = await Promise.all(tfl_lines.map(l => tfl_api.get_line_stoppoints_in_order(l)))
   const stoppoints_flat = raw_stoppoints.map(sp => sp.data.flat()).flat()
+  // TODO: we get nulls in the lines array. Why?
+  // TODO: we get duplicate stoppoints. Why? we have 472 stoppoints, but get 1353 in the array
   const stoppoints = stoppoints_flat.map(sp => generate_stoppoints(sp))
   const lines = stoppoints_flat.map(l => generate_single_line(l))
   return { stoppoints: stoppoints.flat(), lines: lines.flat() }
