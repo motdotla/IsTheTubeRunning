@@ -18,13 +18,43 @@ const stoppoint_client = new Gremlin.driver.Client(
   }
 )
 
-async () => {const haveOpened = await stoppoint_client.open()
-  logger.info('opened graphdb client: ', haveOpened)}
-
-
-function escape_string(str) {
-  return str.replace(/'/g, '\\\'')
+async () => {
+  const haveOpened = await stoppoint_client.open()
+  logger.info('opened graphdb client: ', haveOpened)
 }
+
+
+function escape_gremlin_special_characters(str) {
+  /**
+   * Escapes special characters in a string for use in gremlin queries
+   * from http://groovy-lang.org/syntax.html#_escaping_special_characters
+   * @param {String} str - string to escape
+   * @returns {String} - escaped string
+   *
+   *
+   * Escape sequence	Character
+   * \b -> backspace
+   * \f -> formfeed
+   * \n ->  newline
+   * \r -> carriage return
+   * \s -> single space
+   * \t -> tabulation
+   * \\ -> backslash
+   * \' -> single quote within a single-quoted string (and optional for triple-single-quoted and double-quoted strings)
+   * \" -> double quote within a double-quoted string (and optional for triple-double-quoted and single-quoted strings)
+   *
+   */
+  let interim = str.replaceAll(/\\/g, '\\\\') // do this first so we don't escape the other escapes
+  interim = interim.replaceAll(/\cH/g, '\\b') // match backspace
+  interim = interim.replaceAll(/\cL/g, '\\f') // match formfeed
+  interim = interim.replaceAll(/\n/g, '\\n')  // match newline
+  interim = interim.replaceAll(/\cM/g, '\\r') // match carriage return
+  interim = interim.replaceAll(/\t/g, '\\t')  // match tab
+  interim = interim.replaceAll(/'/g, '\\\'')  // match single quote
+  interim = interim.replaceAll(/"/g, '\\"')   // match double quote
+  return interim
+}
+
 
 const add_array_value = (arr, property_name) => {
   /**
@@ -34,12 +64,12 @@ const add_array_value = (arr, property_name) => {
    * @param {Array} arr - array to convert
    * @returns {String} - list of .property entries
    */
-  const items = arr.map((item) => `.property('${property_name}', '${escape_string(item)}')`).join('\n')
+  const items = arr.map((item) => `.property('${property_name}', '${escape_gremlin_special_characters(item)}')`).join('\n')
 
   return items
 }
 
-const add_stoppoint = async (stoppoint, upsert = false) => {
+const add_stoppoint = async (stoppoint, upsert = true) => {
   /**
    * Adds a stoppoint to the graphdb.
    * a stoppoint is an object with teh following properties:
@@ -52,7 +82,7 @@ const add_stoppoint = async (stoppoint, upsert = false) => {
   // construct a query to add the stoppoint to the graphdb
   const add_query = `addV('${stoppoint['type']}')
   .property('id', '${stoppoint['id']}')
-  .property('name', '${escape_string(stoppoint['name'])}')
+  .property('name', '${escape_gremlin_special_characters(stoppoint['name'])}')
   .property('naptanId', '${stoppoint['naptanId']}')
   .property('lat', '${stoppoint['lat']}')
   .property('lon', '${stoppoint['lon']}')
@@ -72,36 +102,127 @@ const add_stoppoint = async (stoppoint, upsert = false) => {
   // log the query, removing the newlines
   // logger.debug(query.replace(/\n/g, ''))
 
-  const result = await execute_query(stoppoint_client, query, 3)
-  return result
+  const result = await execute_query(stoppoint_client, query, 5)
+  const serialized_items = serialize_stoppoint(result['data']['_items'])
+  return { ...result, data: serialized_items }
 }
 
-const add_line = async (line_edge, upsert = false) => {
+const add_line = async (line_edge, upsert = true) => {
   // add a line to the graphdb
   // a line is an object with the following properties:
   // id, name, modeName, modeId, routeSections
-  logger.debug(`adding line ${line_edge.id} to graphdb`)
 
+  const line_id = line_edge['id']
 
-  const query = `g.E('${line_edge['id']}')
-    .fold()
-    .coalesce(
-      unfold(),
-      addE('TO')
-      .from(g.V('${line_edge['from']}'))
-      .to(g.V('${line_edge['to']}'))
-      .property('id', '${line_edge['id']}')
-      .property('line', '${line_edge['lineName']}')
-      .property('branch', '${line_edge['branchId']}')
-      .property('direction', '${line_edge['direction']}'))`
+  // logger.debug(`adding line ${line_id} to graphdb`)
+
+  const add_query = `addE('TO')
+                    .from(g.V('${line_edge['from']}'))
+                    .to(g.V('${line_edge['to']}'))
+                    .property('id', '${line_edge['id']}')
+                    .property('line', '${line_edge['lineName']}')
+                    .property('branch', '${line_edge['branchId']}')
+                    .property('direction', '${line_edge['direction']}')`
+
+  const with_upsert = `E('${line_edge['id']}')
+                      .fold()
+                      .coalesce(
+                        unfold(),
+                        ${add_query}
+                        )`
+
+  const query = `g.${upsert ? with_upsert : add_query}`
+
   // submit the query to the graphdb
   //logger.debug(query.replace(/\n/g, ''))
-  const result = await execute_query(query, 5)
-  return result
+  const result = await execute_query(stoppoint_client, query, 5)
+  const serialized_items = serialize_stoppoint(result['data']['_items'])
+  return { ...result, data: serialized_items }
 
 }
 
-const execute_query = async (client, query, maxAttempts) => {
+const find_route_between_stops = async (starting_stop, ending_stop, line) => {
+  /**
+   * Finds a route between two stops on a given line
+   * @param {String} starting_stop - id of the starting stop
+   * @param {String} ending_stop - id of the ending stop
+   * @param {String} line - line to search on
+   * @returns {Array} - array of stop ids
+   * @returns {null} - if no route is found
+   */
+
+  // construct a query to find the route between the two stops
+  const query = 'g.V(source).repeat(outE().has(\'line\', line).inV().as(\'v\').simplePath()).until(hasId(target)).path()'
+  const params = {
+    source: starting_stop,
+    target: ending_stop,
+    line: line
+  }
+  const result = await execute_query(stoppoint_client, query, 5, params)
+  const simplified_routes = simplify_discovered_route(result)
+
+return { ...result, data: simplified_routes }
+}
+
+const simplify_discovered_route = (route_result) => {
+  /**
+   * Simplifies the result of a route query
+   * @param {Object} route_result - result of a route query
+   * @returns {??} - array of stoppoints and lines
+   */
+  // there can be more than one route found
+  const route_items = route_result['data']['_items']
+  // logger.debug(`found ${route_items.length} routes`)
+  // logger.debug(route_items)
+  const simplified_routes = route_items.map((route) => {
+    // each route is an array of vertices (stoppoints) and edges (lines)
+    // we want to simplify the data that's returned
+    // first, check if it's a stoppoint (label = 'stoppoint') or a line (label = 'TO')
+    // if it's a stoppoint, use serialize_stoppoint
+    // if it's a line, use serialize_line
+    const simplified_route = route['objects'].map((item) => {
+      if (item['label'] === 'stoppoint') {
+        return serialize_stoppoint([item])[0]
+      } else if (item['label'] === 'TO') {
+        return serialize_line(item)
+      }
+    })
+    return simplified_route
+  })
+  return simplified_routes
+}
+
+const serialize_line = (line) => {
+  /**
+   * Serializes a line object
+   * @param {Object} line - line object
+   * @returns {Object} - serialized line object
+   */
+  /*
+              "id": "9ly2c-2-7u1eg-zlqov",
+            "label": "TO",
+            "type": "edge",
+            "inVLabel": "stoppoint",
+            "outVLabel": "stoppoint",
+            "inV": "zlqov",
+            "outV": "7u1eg",
+            "properties": {
+              "line": "9ly2c",
+              "branch": "2",
+              "direction": "o3942"
+            }
+            */
+  const serialized_line = {
+    id: line['id'],
+    from: line['outV'],
+    to: line['inV'],
+    ...serializeProperties(line['properties'])
+  }
+  return serialized_line
+}
+
+
+const execute_query = async (client, query, maxAttempts, params = null) => {
   /**
    * Retry a function up to a maximum number of attempts
    * adapted from https://solutional.ee/blog/2020-11-19-Proper-Retry-in-JavaScript.html
@@ -111,18 +232,20 @@ const execute_query = async (client, query, maxAttempts) => {
    *
    * @returns {String} - result of the query
    */
-
-
-  let retry_time = 200
+  let retry_time = 1000
   const execute = async (attempt) => {
     if (attempt > 1) { logger.debug(`attempt ${attempt} of ${maxAttempts}`) }
     try {
-      const client_result = await client.submit(query)
+      if (params) {
+        logger.debug(`executing query with params: ${JSON.stringify(params)}`)
+      }
+      const client_result = await client.submit(query, params)
       // if we got the result, then we can return it
       const ms_status_code = client_result['statusAttributes'] ? client_result['statusAttributes']['x-ms-status-code'] : null
 
-      const seralised_result = serializeGremlinResults(client_result['_items'])
-      return { data: seralised_result, success: true, status_code: ms_status_code }
+      // this is distinct to an ADD query, so move to that
+      // const seralised_result = serializeGremlinResults(client_result['_items'])
+      return { data: client_result, success: true, status_code: ms_status_code }
     } catch (err) {
       const ms_status_code = err['statusAttributes'] ? err['statusAttributes']['x-ms-status-code'] : null
       const ms_retry_after = err['statusAttributes'] ? err['statusAttributes']['x-ms-retry-after-ms'] : null
@@ -149,7 +272,7 @@ const execute_query = async (client, query, maxAttempts) => {
   return final_result
 }
 
-function serializeGremlinResults(results) {
+function serialize_stoppoint(results) {
   /**
    * Serialise the results of a gremlin query
    * return an array of objects.
@@ -187,13 +310,21 @@ function serializeProperties(properties) {
   let serializedProperties = {}
   Object.keys(properties).forEach(key => {
     const value = properties[key]
-    if (value.length > 1) {
-      serializedProperties[key] = value.map(item => item.value)
+    if (Array.isArray(value)) {
+      serializedProperties[key] = value.map(item => safe_get_property(item, 'value'))
+      if (serializedProperties[key].length === 1) {
+        serializedProperties[key] = serializedProperties[key][0]
+      }
     } else {
-      serializedProperties[key] = value[0].value
+      // not an array
+      serializedProperties[key] = value
     }
   })
   return serializedProperties
+}
+
+function safe_get_property(obj, key) {
+  return obj[key] ? obj[key] : null
 }
 
 
@@ -201,4 +332,15 @@ const delay = (fn, ms) => new Promise((resolve) => setTimeout(() => resolve(fn()
 
 const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
 
-module.exports = { add_stoppoint, add_line }
+module.exports = {
+  add_stoppoint,
+  add_line,
+  find_route_between_stops,
+  escape_gremlin_special_characters,
+  serializeProperties,
+  serialize_stoppoint,
+  serialize_line,
+  stringToMilliseconds,
+  safe_get_property,
+  execute_query
+}
