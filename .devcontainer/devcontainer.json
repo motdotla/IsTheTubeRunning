@@ -16,8 +16,6 @@
 				"ms-vscode.azure-account",
 				"ms-azuretools.vscode-azurefunctions",
 				"ms-azuretools.vscode-azureresourcegroups",
-				"ms-vscode.vscode-typescript-tslint-plugin",
-				"ms-vscode.vscode-typescript-next",
 				"Orta.vscode-jest",
 				"GitHub.codespaces",
 				"esbenp.prettier-vscode"
