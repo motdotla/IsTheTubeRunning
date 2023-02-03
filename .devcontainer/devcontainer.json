@@ -15,9 +15,18 @@
 				"dbaeumer.vscode-eslint",
 				"ms-vscode.azure-account",
 				"ms-azuretools.vscode-azurefunctions",
-				"ms-azuretools.vscode-azureresourcegroups"
+				"ms-azuretools.vscode-azureresourcegroups",
+				"ms-vscode.vscode-typescript-tslint-plugin",
+				"ms-vscode.vscode-typescript-next",
+				"Orta.vscode-jest",
+				"GitHub.codespaces",
+				"esbenp.prettier-vscode"
 			]
 		}
+	},
+	"postCreateCommand": {
+		"install": "npm install"
+		
 	},
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "npm install",
