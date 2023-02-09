@@ -1,105 +1,7 @@
-import Stoppoint from "../models/Stoppoint"
-import { Mode } from "../models/Mode"
-import { Line, LineSegment } from "../models/Line"
-import {
-  RouteTraversalResultSet,
-  RouteTraversalResult,
-  IAddStoppointResult,
-  FlattenedProperties,
-  PropertyBucket,
-  TraversalStoppoint,
-  TraversalLineSegment,
-  StoppointQueryItem,
-  LineQueryItem,
-  RouteQueryResult,
-} from "../models/RouteQueryResult"
-
-//const Stoppoint = require('../models/Stoppoint')
-const config = require('../utils/config')
-const { execute_query } = require('./graphdb.execute')
-const Gremlin = require('gremlin')
-const logger = require('../utils/logger')
-const helpers = require('../utils/helpers')
-const validate_json = require('jsonschema')
-
-var fs = require('fs')
-const path = require('node:path')
-function load_schema(filename: string): object {
-  try {
-    return JSON.parse(fs.readFileSync(path.resolve(__dirname, 'schemas', filename), 'utf8'))
-  } catch (err) {
-    console.error(err)
-    throw err
-  }
-
-}
-
-const graphdb_request_add_stoppoint = load_schema('graphdb_request_add_stoppoint.json')
-const graphdb_request_add_line = load_schema('graphdb_request_add_line.json')
-
-const gremlin_db_string = `/dbs/${config.graph_database}/colls/${config.graph_stoppoint_colleciton}`
-const stoppoint_authenticator = new Gremlin.driver.auth.PlainTextSaslAuthenticator(gremlin_db_string, config.graph_primary_key)
-
-const stoppoint_client = new Gremlin.driver.Client(
-  config.GRAPH_DATABASE_ENDPOINT,
-  {
-    authenticator: stoppoint_authenticator,
-    traversalsource: 'g',
-    rejectUnauthorized: true,
-    mimeType: 'application/vnd.gremlin-v2.0+json'
-  }
-)
-
-async () => {
-  const haveOpened = await stoppoint_client.open()
-  logger.info('opened graphdb client: ', haveOpened)
-}
 
 
-function escape_gremlin_special_characters(str: string) {
-  /**
-   * Escapes special characters in a string for use in gremlin queries
-   * from http://groovy-lang.org/syntax.html#_escaping_special_characters
-   * @param {String} str - string to escape
-   * @returns {String} - escaped string
-   *
-   *
-   * Escape sequence	Character
-   * \b -> backspace
-   * \f -> formfeed
-   * \n ->  newline
-   * \r -> carriage return
-   * \s -> single space
-   * \t -> tabulation
-   * \\ -> backslash
-   * \' -> single quote within a single-quoted string (and optional for triple-single-quoted and double-quoted strings)
-   * \" -> double quote within a double-quoted string (and optional for triple-double-quoted and single-quoted strings)
-   *
-   */
-  let interim = str.replaceAll(/\\/g, '\\\\') // do this first so we don't escape the other escapes
-  interim = interim.replaceAll(/\cH/g, '\\b') // match backspace
-  interim = interim.replaceAll(/\cL/g, '\\f') // match formfeed
-  interim = interim.replaceAll(/\n/g, '\\n')  // match newline
-  interim = interim.replaceAll(/\cM/g, '\\r') // match carriage return
-  interim = interim.replaceAll(/\t/g, '\\t')  // match tab
-  interim = interim.replaceAll(/'/g, '\\\'')  // match single quote
-  interim = interim.replaceAll(/"/g, '\\"')   // match double quote
-  return interim
-}
 
 
-const add_array_value = (arr: any[], property_name: string) => {
-  /**
-   * Converts an array to a string containing the same property
-   * with each different value ('multi-properties')
-   * see https://tinkerpop.apache.org/docs/current/reference/#vertex-properties
-   * @param {Array} arr - array to convert
-   * @returns {String} - list of .property entries
-   */
-  const items = arr.map((item) => `.property('${property_name}', '${escape_gremlin_special_characters(item)}')`).join('\n')
-
-  return items
-}
 
 const add_stoppoint = async (stoppoint: Stoppoint, upsert = true): Promise<IAddStoppointResult> => {
   /**
@@ -355,7 +257,7 @@ function deserialize_stoppoint(results: TraversalStoppoint[]): StoppointQueryIte
       lines: properties.lines as string[],
       naptanId: properties.naptanId as string,
       ...properties
-    } )
+    })
   })
   return serializedResults
 }
@@ -369,35 +271,22 @@ function flattenProperties(properties: PropertyBucket, minimum_required_properti
   }
   let deserializedProperties: FlattenedProperties = {}
   Object.keys(properties).forEach(key => {
-      const value = properties[key]
-      if (Array.isArray(value)) {
-        // it's an array
-        const property_values = value.filter(item => Object.prototype.hasOwnProperty.call(item, 'value')).map(item => item['value'])
-        // if there's only a single value, return that as a key:value pair
-        // but only for properties which are not defined as arrays in IStoppoint (properties_which_are_arrays)
-        if (!properties_which_are_arrays.includes(key) && property_values.length === 1) {
-          deserializedProperties[key] = property_values[0]
-        } else {
-          deserializedProperties[key] = property_values
-        }
+    const value = properties[key]
+    if (Array.isArray(value)) {
+      // it's an array
+      const property_values = value.filter(item => Object.prototype.hasOwnProperty.call(item, 'value')).map(item => item['value'])
+      // if there's only a single value, return that as a key:value pair
+      // but only for properties which are not defined as arrays in IStoppoint (properties_which_are_arrays)
+      if (!properties_which_are_arrays.includes(key) && property_values.length === 1) {
+        deserializedProperties[key] = property_values[0]
       } else {
-        // not an array
-        deserializedProperties[key] = value
+        deserializedProperties[key] = property_values
       }
+    } else {
+      // not an array
+      deserializedProperties[key] = value
+    }
   })
 
   return deserializedProperties
-}
-
-
-module.exports = {
-  stoppoint_client,
-  add_stoppoint,
-  add_line_segment,
-  add_user,
-  find_route_between_stops,
-  escape_gremlin_special_characters,
-  flattenProperties,
-  deserialize_stoppoint,
-  deserialize_line
 }
